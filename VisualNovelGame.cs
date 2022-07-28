@@ -6,15 +6,13 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 using System.Collections.Generic;
-
+using UI;
 namespace VisualNovelMono;
-
 
 public class VisualNovelGame : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-
 
     private List<UserInterfaceElement> _ui = new List<UserInterfaceElement>();
 
@@ -30,8 +28,6 @@ public class VisualNovelGame : Game
 
     protected override void Initialize()
     {
-        // TODO: Add your initialization logic here
-
         base.Initialize();
     }
 
@@ -39,21 +35,26 @@ public class VisualNovelGame : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         testTexture = Content.Load<Texture2D>("mikeisilliconl");
-        _buttonTexture = Content.Load<Texture2D>("buttons_small");
 
-        Button exitButton = new Button(new Vector2(0, 100), new Vector2(64, 64), _buttonTexture, new Rectangle(0, 0, 32, 32));
+        Button exitButton = new Button(new Vector2(0, 100), new Vector2(64, 64), new Rectangle(0, 0, 32, 32));
         exitButton.OnClicked += () =>
         {
             System.Console.WriteLine("You clicked me!");
+            Exit();
         };
-
         _ui.Add(exitButton);
+        foreach (UserInterfaceElement elem in _ui)
+        {
+            elem.LoadContent(Content);
+        }
     }
 
     protected override void Update(GameTime gameTime)
     {
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+        {
             Exit();
+        }
 
         MouseState mouse = Mouse.GetState();
         if (mouse.LeftButton == ButtonState.Pressed)
@@ -67,14 +68,8 @@ public class VisualNovelGame : Game
                     (elem.BoundingBoxSize.Y + elem.Position.Y) >= mouse.Y
                   )
                 {
+
                     elem.Click();
-                }
-                else
-                {
-                    System.Console.WriteLine($"elem.Position.X >= mouse.X = {elem.Position.X >= mouse.X}");
-                    System.Console.WriteLine($"elem.Position.Y >= mouse.Y = {elem.Position.Y >= mouse.Y}");
-                    System.Console.WriteLine($"(elem.BoundingBoxSize.X + elem.Position.X) >= mouse.X = {(elem.BoundingBoxSize.X + elem.Position.X) >= mouse.X}");
-                    System.Console.WriteLine($"e(elem.BoundingBoxSize.Y + elem.Position.Y) >= mouse.Y = {(elem.BoundingBoxSize.Y + elem.Position.Y) >= mouse.Y}");
                 }
             }
         }

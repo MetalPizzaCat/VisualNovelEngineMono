@@ -49,3 +49,10 @@
 /processorParam:TextureFormat=Color
 /build:mikeisilliconl.png
 
+#begin Roboto.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Roboto.spritefont
+
