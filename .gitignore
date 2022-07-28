@@ -1,0 +1,47 @@
+#vscode stuff
+.config
+.vscode
+
+#dotnet stuff
+[b,B]in/
+[o,O]bj/
+[Dd]ebug*/
+[Rr]elease*/
+
+#Project files
+[Bb]uild/
+
+#monogame stuff
+Content/[o,O]bj
+Content/[b,B]in
+
+#Visual Studio files
+*.pidb
+*.userprefs
+*.[Oo]bj
+*.exe
+*.pdb
+*.user
+*.aps
+*.pch
+*.vspscc
+*.vssscc
+*_i.c
+*_p.c
+*.ncb
+*.suo
+*.tlb
+*.tlh
+*.bak
+*.[Cc]ache
+*.ilk
+*.log
+*.lib
+*.sbr
+*.sdf
+ipch/
+obj/
+[Bb]in
+[Dd]ebug*/
+[Rr]elease*/
+Ankh.NoLoad
