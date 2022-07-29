@@ -17,7 +17,7 @@ namespace UI
         /// Note: because of how monogame handles assets you can call "load" as much as you want
         /// but you will still load one instance of the asset
         /// </summary>
-        private SpriteFont _font;
+        private SpriteFont? _font;
 
         public string? Text
         {
@@ -27,14 +27,14 @@ namespace UI
 
         public Button(Vector2 position, Vector2 size, Rectangle? srcRect = null) : base(position, size)
         {
-            _sourceRectangle = srcRect ?? _buttonTextureAtlas.Bounds;
+            _sourceRectangle = srcRect ?? _buttonTextureAtlas?.Bounds ?? new Rectangle();
         }
 
         public override void Draw(SpriteBatch batch)
         {
             base.Draw(batch);
             batch.Draw(_buttonTextureAtlas, new Rectangle(Position.ToPoint(), BoundingBoxSize.ToPoint()), _sourceRectangle, Color.White);
-            batch.DrawString(_font, _text ?? "no text lal", Position, Color.White);
+            batch.DrawString(_font, _text ?? "no text lol", Position, Color.White);
         }
 
         public override void LoadContent(ContentManager content)

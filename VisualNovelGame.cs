@@ -15,15 +15,22 @@ public class VisualNovelGame : Game
     private SpriteBatch _spriteBatch;
 
     private List<UserInterfaceElement> _ui = new List<UserInterfaceElement>();
-
     private Texture2D _buttonTexture;
     Texture2D testTexture;
+    private StateManager _stateManager;
+
+    private Dialog _dialog;
 
     public VisualNovelGame()
     {
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
+
+        _stateManager = new StateManager();
+        _dialog = new Dialog();
+        _dialog.Speakers.Add(new Speaker("Skull", "Speakers/skull"));
+        _dialog.DialogTexts.Add(new DialogText());
     }
 
     protected override void Initialize()
@@ -40,6 +47,7 @@ public class VisualNovelGame : Game
         exitButton.OnClicked += () =>
         {
             System.Console.WriteLine("You clicked me!");
+             System.IO.File.WriteAllText("./dialog.json", Newtonsoft.Json.JsonConvert.SerializeObject(_dialog));
             Exit();
         };
         _ui.Add(exitButton);
@@ -68,7 +76,6 @@ public class VisualNovelGame : Game
                     (elem.BoundingBoxSize.Y + elem.Position.Y) >= mouse.Y
                   )
                 {
-
                     elem.Click();
                 }
             }

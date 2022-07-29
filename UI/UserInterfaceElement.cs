@@ -8,7 +8,7 @@ namespace UI
     /// Represents base of all of the ui elements
     /// Has location and bounding box that are used for mouse detection
     /// </summary>
-    public class UserInterfaceElement
+    public class UserInterfaceElement : GameObject
     {
         /// <summary>
         /// Position of the UI element on screen
@@ -26,34 +26,21 @@ namespace UI
         public delegate void HoverEventHandler();
         public delegate void UnhoverEventHandler();
 
-        public event ClickEventHandler OnClicked;
-        public event HoverEventHandler OnHoveredOver;
-        public event UnhoverEventHandler OnUnhovered;
+        public event ClickEventHandler? OnClicked;
+        public event HoverEventHandler? OnHoveredOver;
+        public event UnhoverEventHandler? OnUnhovered;
 
         /// <summary>
         /// Function that calls of the event and handles all of the cosmetics
         /// </summary>
         public virtual void Click()
         {
-            OnClicked.Invoke();
+            OnClicked?.Invoke();
         }
-
-
-
         public UserInterfaceElement(Vector2 position, Vector2 size)
         {
             Position = position;
             BoundingBoxSize = size;
-        }
-
-        public virtual void LoadContent(ContentManager content)
-        {
-            
-        }
-
-        public virtual void Draw(SpriteBatch batch)
-        {
-
         }
     }
 }
