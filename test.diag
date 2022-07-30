@@ -1,0 +1,68 @@
+#the idea behind how stuff in this project is stored is fairly simple
+#yaml is used for static data written by user, like configs, speaker info, scene info
+#and dialog files are used as a way to "program" a dialog, since they contain utilities for dialog jumps
+#as well as value checks
+
+#any thing in text written as $variable_name$ will be replaced with value from [variables] block
+
+#this file is an example for the Dialog "programming" language
+#comments are lines that start with # symbol
+#whole line will be treated as a comment
+#this creates speaker with id 0
+[speaker]
+#because funni
+name = skull
+#points to the name of the object that contains speaker info
+#this object is stored in yaml
+source = skull_speaker
+position = left
+
+#speaker block does not create a brand new speaker, rather it defines how already defined speaker would work
+[speaker]
+name = girl
+source = skull
+position = right
+
+[variables]
+USERNAME = Mieclesoft Bimbows
+
+#these are block types
+[dialog]
+#this is name label
+#it is used for moving around the dialog
+{introduction}
+skull: hello there child
+skull: or should i say $USERNAME$?
+skull: i can see your dreams
+girl: woah
+girl: i don't care
+skull: u suck
+#this will act as command to switch current dialog thing 
+# to a new block
+jump choice1
+
+[options]
+{choice1}
+girl: No u
+jump petty
+girl: Sure i do, what's your point
+jump die
+girl: Basinga
+jump dialog
+
+[dialog]
+{petty}
+skull: no u
+girl: no u
+skull: no u
+girl: no u
+#using 0 as the name will allow to avoid referencing an actual speaker
+0: you both suck
+jump introduction
+
+
+[dialog]
+{die}
+skull: just fucking die >:(
+#exit will just close the game
+exit

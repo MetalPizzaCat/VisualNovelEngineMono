@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Newtonsoft.Json;
 
 public class Speaker : GameObject
 {
@@ -30,15 +31,20 @@ public class Speaker : GameObject
         }
     }
 
-    public Speaker(string? name, string? textureName)
+    public Speaker(string? name, string? textureName, VisualNovelMono.VisualNovelGame game) : base(game)
     {
         DisplayName = name;
         DisplayTextureName = textureName;
     }
-    public Speaker(string? name, Texture2D? texture)
+    public Speaker(string? name, Texture2D? texture, VisualNovelMono.VisualNovelGame game) : base(game)
     {
         DisplayName = name;
         _texture = texture;
+    }
+
+    public Speaker() : base(null)
+    {
+
     }
 
     private Texture2D? _texture;

@@ -11,4 +11,6 @@ public class Scene : GameObject
         base.Draw(spriteBatch);
         spriteBatch.Draw(BackgroundTexture, new Rectangle(0, 0, ScreenSize.X, ScreenSize.Y), null, Color.White);
     }
+
+    public Scene(VisualNovelMono.VisualNovelGame game) : base(game) { }
 }

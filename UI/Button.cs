@@ -25,7 +25,7 @@ namespace UI
             set => _text = value;
         }
 
-        public Button(Vector2 position, Vector2 size, Rectangle? srcRect = null) : base(position, size)
+        public Button(VisualNovelMono.VisualNovelGame game, Vector2 position, Vector2 size, Rectangle? srcRect = null) : base(position, size, game)
         {
             _sourceRectangle = srcRect ?? _buttonTextureAtlas?.Bounds ?? new Rectangle();
         }

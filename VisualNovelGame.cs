@@ -15,11 +15,13 @@ public class VisualNovelGame : Game
     private SpriteBatch _spriteBatch;
 
     private List<UserInterfaceElement> _ui = new List<UserInterfaceElement>();
-    private Texture2D _buttonTexture;
-    Texture2D testTexture;
+    Texture2D? testTexture;
     private StateManager _stateManager;
 
     private Dialog _dialog;
+    private List<GameObject> _gameObjects = new List<GameObject>();
+
+    public List<GameObject> GameObjects => _gameObjects;
 
     public VisualNovelGame()
     {
@@ -28,9 +30,10 @@ public class VisualNovelGame : Game
         IsMouseVisible = true;
 
         _stateManager = new StateManager();
-        _dialog = new Dialog();
-        _dialog.Speakers.Add(new Speaker("Skull", "Speakers/skull"));
-        _dialog.DialogTexts.Add(new DialogText());
+        _dialog = Newtonsoft.Json.JsonConvert.DeserializeObject<Dialog>(System.IO.File.ReadAllText("./dialog.json"))
+            ?? throw new System.NullReferenceException("Invalid dialog file");
+
+        int i = 0;
     }
 
     protected override void Initialize()
@@ -43,11 +46,11 @@ public class VisualNovelGame : Game
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         testTexture = Content.Load<Texture2D>("mikeisilliconl");
 
-        Button exitButton = new Button(new Vector2(0, 100), new Vector2(64, 64), new Rectangle(0, 0, 32, 32));
+        Button exitButton = new Button(this, new Vector2(0, 100), new Vector2(64, 64), new Rectangle(0, 0, 32, 32));
         exitButton.OnClicked += () =>
         {
             System.Console.WriteLine("You clicked me!");
-             System.IO.File.WriteAllText("./dialog.json", Newtonsoft.Json.JsonConvert.SerializeObject(_dialog));
+            System.IO.File.WriteAllText("./dialog.json", Newtonsoft.Json.JsonConvert.SerializeObject(_dialog));
             Exit();
         };
         _ui.Add(exitButton);

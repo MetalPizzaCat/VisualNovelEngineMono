@@ -37,7 +37,7 @@ namespace UI
         {
             OnClicked?.Invoke();
         }
-        public UserInterfaceElement(Vector2 position, Vector2 size)
+        public UserInterfaceElement(Vector2 position, Vector2 size, VisualNovelMono.VisualNovelGame game) : base(game)
         {
             Position = position;
             BoundingBoxSize = size;
