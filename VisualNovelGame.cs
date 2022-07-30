@@ -1,4 +1,6 @@
-﻿/**
+﻿#define PERFORM_DIALOG_DUMP
+
+/**
 * A simple visual novel type of thing to try out monogame 
 */
 using Microsoft.Xna.Framework;
@@ -6,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 using System.Collections.Generic;
+
 using UI;
 namespace VisualNovelMono;
 
@@ -23,22 +26,29 @@ public class VisualNovelGame : Game
 
     public List<GameObject> GameObjects => _gameObjects;
 
+    private bool _leftMouseButtonPressed = false;
+    public void AddUiElement(UserInterfaceElement elem)
+    {
+        elem.LoadContent(Content);
+        _ui.Add(elem);
+    }
+
     public VisualNovelGame()
     {
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
 
+        DialogParser parser = new DialogParser("./test.diag");
         _stateManager = new StateManager();
-        _dialog = Newtonsoft.Json.JsonConvert.DeserializeObject<Dialog>(System.IO.File.ReadAllText("./dialog.json"))
-            ?? throw new System.NullReferenceException("Invalid dialog file");
-
-        int i = 0;
+        _dialog = parser.ParseDialog(this);
+        _dialog.Game = this;
     }
 
     protected override void Initialize()
     {
         base.Initialize();
+        _dialog.AdvanceDialog(null);
     }
 
     protected override void LoadContent()
@@ -50,7 +60,11 @@ public class VisualNovelGame : Game
         exitButton.OnClicked += () =>
         {
             System.Console.WriteLine("You clicked me!");
-            System.IO.File.WriteAllText("./dialog.json", Newtonsoft.Json.JsonConvert.SerializeObject(_dialog));
+#if PERFORM_DIALOG_DUMP
+            //dump the dialog 
+            //for debug purposes
+            System.IO.File.WriteAllText("./.temp/dialog.json", Newtonsoft.Json.JsonConvert.SerializeObject(_dialog));
+#endif
             Exit();
         };
         _ui.Add(exitButton);
@@ -68,8 +82,9 @@ public class VisualNovelGame : Game
         }
 
         MouseState mouse = Mouse.GetState();
-        if (mouse.LeftButton == ButtonState.Pressed)
+        if (mouse.LeftButton == ButtonState.Pressed && !_leftMouseButtonPressed)
         {
+            _leftMouseButtonPressed = true;
             foreach (UserInterfaceElement elem in _ui)
             {
                 if (
@@ -82,6 +97,10 @@ public class VisualNovelGame : Game
                     elem.Click();
                 }
             }
+        }
+        else if (mouse.LeftButton == ButtonState.Released && _leftMouseButtonPressed)
+        {
+            _leftMouseButtonPressed = false;
         }
         base.Update(gameTime);
     }

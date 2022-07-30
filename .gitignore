@@ -1,6 +1,8 @@
 #vscode stuff
 .config
 .vscode
+#test stuff
+.temp
 
 #dotnet stuff
 [b,B]in/

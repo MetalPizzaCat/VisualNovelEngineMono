@@ -1,5 +1,9 @@
 using System.Collections.Generic;
 
+using Microsoft.Xna.Framework;
+
+using UI;
+
 public class DialogTextAction : DialogActionBase
 {
     /// <summary>
@@ -7,30 +11,37 @@ public class DialogTextAction : DialogActionBase
     /// </summary>
     public readonly DialogEventType EndEventType = DialogEventType.Exit;
     public List<DialogText> Text { get; set; } = new List<DialogText>();
+    private Label _textLabel;
 
-    public DialogTextAction() { }
-}
+    private int _currentTextId = 0;
 
-public class SceneChangeAction : DialogActionBase
-{
-    public string NextSceneName { get; set; } = "default";
-
-    public SceneChangeAction() { }
-}
-
-public class DialogText
-{
-    /// <summary>
-    /// This id is used to reference proper speaker from the memory
-    /// Leave this as null to speak as "narrator"(no speaker will be explicitly used)
-    /// </summary>
-    /// <value></value>
-    public int? SpeakerId { get; set; }
-
-    public string Text { get; set; } = "PLACEHOLDER_TEXT_123456789";
-    public DialogText(string text, int? speakerId)
+    public DialogTextAction(Dialog dialog) : base(dialog)
     {
-        SpeakerId = speakerId;
-        Text = text;
+        _textLabel = new Label(dialog.Game, "DEFAULT TEXT", Vector2.Zero);
+    }
+
+    public override void Init()
+    {
+        base.Init();
+        Dialog.Game.AddUiElement(_textLabel);
+        _textLabel.OnClicked += _onLabelClicked;
+    }
+
+    private void _onLabelClicked()
+    {
+        //change text
+        if (++_currentTextId < Text.Count)
+        {
+            _textLabel.Text = Text[_currentTextId].Text;
+        }
+        else
+        {
+            //TODO: Jump
+        }
+    }
+
+    public override void Clear()
+    {
+        base.Clear();
     }
 }

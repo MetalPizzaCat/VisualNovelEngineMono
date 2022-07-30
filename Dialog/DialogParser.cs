@@ -8,14 +8,15 @@ using System.Collections.Generic;
 /// </summary>
 public class DialogParser
 {
+    private string _filePath;
     /// <summary>
     /// Regular Expression for checking if line is block type marker
     /// </summary>
     private readonly Regex _typeNameRegEx = new Regex(@"\[([a-z])\w+\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private List<Speaker> _speakers = new List<Speaker>();
-    private Dictionary<string, DialogTextAction> _dialogs = new Dictionary<string, DialogTextAction>();
-    private Dictionary<string, DialogOptionAction> _options = new Dictionary<string, DialogOptionAction>();
+    //the result dialog
+    private Dialog _dialog;
 
     /// <summary>
     /// Object that handles line by line reading.
@@ -104,7 +105,7 @@ public class DialogParser
     {
         string? line = _getNextProperLine();
         string label = line ?? throw new NullReferenceException("Dialog is missing a name label");
-        DialogTextAction action = new DialogTextAction();
+        DialogTextAction action = new DialogTextAction(_dialog);
         while ((line = _getNextProperLine()) != null)
         {
             if (line == string.Empty)
@@ -125,7 +126,7 @@ public class DialogParser
 
             action.Text.Add(_parseDialogLine(line));
         }
-        _dialogs.Add(label, action);
+        _dialog.DialogItems.Add(label, action);
     }
 
     private void _parseDialogOption()
@@ -141,7 +142,7 @@ public class DialogParser
         jump dialog*/
         string? line = _getNextProperLine();
         string label = line ?? throw new NullReferenceException("Dialog is missing a name label");
-        DialogOptionAction action = new DialogOptionAction();
+        DialogOptionAction action = new DialogOptionAction(_dialog);
         line = _getNextProperLine();
         while (line != null && line != string.Empty)
         {
@@ -162,7 +163,7 @@ public class DialogParser
             action.Options.Add(new DialogOption(type, text.Text, actionInfo[1]));
             line = _getNextProperLine();
         }
-        _options.Add(label, action);
+        _dialog.DialogItems.Add(label, action);
     }
 
     private void _processType(string? line)
@@ -191,8 +192,14 @@ public class DialogParser
     }
     public DialogParser(string dialogPath)
     {
-        string dialog = File.ReadAllText(dialogPath);
-        using (_dialogFileReader = new StringReader(dialog))
+        _filePath = dialogPath;
+    }
+
+    public Dialog ParseDialog(VisualNovelMono.VisualNovelGame game)
+    {
+        string dialogFile = File.ReadAllText(_filePath);
+        _dialog = new Dialog(game);
+        using (_dialogFileReader = new StringReader(dialogFile))
         {
             string? line = string.Empty;
             while ((line = _getNextProperLine()) != null)
@@ -202,9 +209,9 @@ public class DialogParser
                     _processType(line);
                     continue;
                 }
-                //Console.WriteLine(line);
             }
             Console.WriteLine("Finished parsing");
         }
+        return _dialog;
     }
 }
