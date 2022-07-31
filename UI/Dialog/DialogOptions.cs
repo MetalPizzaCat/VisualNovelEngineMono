@@ -3,16 +3,10 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
 using UI;
-public class DialogOptions : UI.UserInterfaceElement
+public class DialogOptions : DialogUIElement
 {
-    public delegate void DialogEventHandler(DialogEventType type);
 
-    /// <summary>
-    /// Called when dialog hits event such as jump or exit
-    /// </summary>
-    public event DialogEventHandler DialogEvent;
-
-    private List<Button> _buttons = new List<Button>();
+    private List<DialogOptionButton> _buttons = new List<DialogOptionButton>();
     private DialogOptionAction _action;
 
     public override bool Visible
@@ -20,7 +14,7 @@ public class DialogOptions : UI.UserInterfaceElement
         get => base.Visible; set
         {
             base.Visible = value;
-            foreach (Button btn in _buttons)
+            foreach (DialogOptionButton btn in _buttons)
             {
                 btn.Visible = value;
             }
@@ -36,21 +30,19 @@ public class DialogOptions : UI.UserInterfaceElement
             int i = 0;
             foreach (DialogOption option in _action.Options)
             {
-                Button btn = new Button(Game, new Vector2(0, i * 50), new Vector2(64, 64));
+                DialogOptionButton btn = new DialogOptionButton(option.Text, option, Game, new Vector2(0, i++ * 50), new Vector2(64, 64), new Rectangle(0, 0, 32, 32));
                 _buttons.Add(btn);
-                btn.OnClicked += _onOptionClicked;
-                Game.AddUiElement(btn);
+                btn.OnOptionSelected += _onOptionSelected;
+                Game.AddUiElement(btn, true);
             }
         }
     }
 
-    public DialogOptions(Vector2 position, Vector2 size, VisualNovelMono.VisualNovelGame game) : base(position, size, game)
-    {
+    public DialogOptions(Vector2 position, Vector2 size, VisualNovelMono.VisualNovelGame game) : base(position, size, game) { }
 
-    }
-
-    private void _onOptionClicked(UserInterfaceElement button)
+    private void _onOptionSelected(DialogOption option)
     {
-        
+        RaiseDialogEvent(option.EventType);
+        System.Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(option));
     }
 }

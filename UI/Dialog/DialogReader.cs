@@ -4,14 +4,8 @@ using Microsoft.Xna.Framework;
 /// <summary>
 /// This element 
 /// </summary>
-public class DialogReader : UserInterfaceElement
+public class DialogReader : DialogUIElement
 {
-    public delegate void DialogEventHandler(DialogEventType type);
-
-    /// <summary>
-    /// Called when dialog hits event such as jump or exit
-    /// </summary>
-    public event DialogEventHandler DialogEvent;
     private DialogTextAction? _dialogText;
     private int _currentLine = 0;
     private Label _label;
@@ -27,6 +21,15 @@ public class DialogReader : UserInterfaceElement
         }
     }
 
+    public override bool Visible
+    {
+        get => base.Visible; set
+        {
+            base.Visible = value;
+            _label.Visible = value;
+        }
+    }
+
     public DialogReader(Vector2 position, Vector2 size, VisualNovelMono.VisualNovelGame game) : base(position, size, game)
     {
         _label = new Label(game, "DEFAULT_TEXT_OONGA_BOONGA", position);
@@ -36,12 +39,12 @@ public class DialogReader : UserInterfaceElement
 
     private void _displayNextLine(UserInterfaceElement sender)
     {
-        if (_dialogText != null)
+        if (_dialogText != null && _currentLine < _dialogText.Text.Count)
         {
             _label.Text = _dialogText.Text[_currentLine++].Text;
             if (_currentLine >= _dialogText.Text.Count)
             {
-                DialogEvent?.Invoke(_dialogText.EndEventType);
+                RaiseDialogEvent(DialogEventType.Jump);
             }
         }
     }

@@ -14,6 +14,11 @@ public class Dialog
     private DialogReader _reader;
 
     /// <summary>
+    /// Ui elements that displays options for player to choose
+    /// </summary>
+    private DialogOptions _options;
+
+    /// <summary>
     /// Key value pair where key is the dialog label and value 
     /// is the action that will happen when dialog jumps to that label
     /// </summary>
@@ -45,11 +50,15 @@ public class Dialog
     private void _displayDialogLines(DialogTextAction action)
     {
         _reader.DialogTextAction = action;
+        _options.Visible = false;
+        _reader.Visible = true;
     }
 
     private void _displayDialogOptions(DialogOptionAction action)
     {
-
+        _options.Action = action;
+        _options.Visible = true;
+        _reader.Visible = false;
     }
 
     private void _onDialogEvent(DialogEventType type)
@@ -58,6 +67,8 @@ public class Dialog
         {
             case DialogEventType.Jump:
                 System.Console.WriteLine("Jumping!");
+                //TODO: remove this temp solution
+                AdvanceDialog("{choice1}");
                 break;
             case DialogEventType.Exit:
                 System.Console.WriteLine("Exit!");
@@ -69,6 +80,11 @@ public class Dialog
     {
         Game = game;
         _reader = new DialogReader(Vector2.Zero, Vector2.Zero, game);
-        _reader.DialogEvent += _onDialogEvent;
+        _reader.DialogEvent     += _onDialogEvent;
+        _options = new DialogOptions(Vector2.Zero, Vector2.Zero, game);
+        _options.DialogEvent    += _onDialogEvent;
+
+        game.AddUiElement(_reader);
+        game.AddUiElement(_options);
     }
 }

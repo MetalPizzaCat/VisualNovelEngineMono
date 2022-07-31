@@ -32,6 +32,7 @@ public class VisualNovelGame : Game
         if (init)
         {
             elem.LoadContent(Content);
+            elem.Init();
         }
         _ui.Add(elem);
     }
@@ -59,7 +60,7 @@ public class VisualNovelGame : Game
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         testTexture = Content.Load<Texture2D>("mikeisilliconl");
 
-        Button exitButton = new Button(this, new Vector2(0, 100), new Vector2(64, 64), new Rectangle(0, 0, 32, 32));
+        Button exitButton = new Button(this, new Vector2(0, 300), new Vector2(64, 64), new Rectangle(0, 0, 32, 32));
         exitButton.OnClicked += (UserInterfaceElement sender) =>
         {
             System.Console.WriteLine("You clicked me!");
@@ -98,6 +99,9 @@ public class VisualNovelGame : Game
                   )
                 {
                     elem.Click();
+                    //TODO: find a better way to prevent collection modification then just stopping
+                    //maybe add "staging collection" that will get merged with main one
+                    break;
                 }
             }
         }
