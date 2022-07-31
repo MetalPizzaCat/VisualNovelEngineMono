@@ -33,7 +33,10 @@ namespace UI
         public override void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
-            spriteBatch.DrawString(_font, Text, Position, Color.White);
+            if (Visible)
+            {
+                spriteBatch.DrawString(_font, Text, Position, Color.White);
+            }
         }
     }
 }

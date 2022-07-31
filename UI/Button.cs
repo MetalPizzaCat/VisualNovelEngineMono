@@ -33,8 +33,11 @@ namespace UI
         public override void Draw(SpriteBatch batch)
         {
             base.Draw(batch);
-            batch.Draw(_buttonTextureAtlas, new Rectangle(Position.ToPoint(), BoundingBoxSize.ToPoint()), _sourceRectangle, Color.White);
-            batch.DrawString(_font, _text ?? "no text lol", Position, Color.White);
+            if (Visible)
+            {
+                batch.Draw(_buttonTextureAtlas, new Rectangle(Position.ToPoint(), BoundingBoxSize.ToPoint()), _sourceRectangle, Color.White);
+                batch.DrawString(_font, _text ?? "no text lol", Position, Color.White);
+            }
         }
 
         public override void LoadContent(ContentManager content)

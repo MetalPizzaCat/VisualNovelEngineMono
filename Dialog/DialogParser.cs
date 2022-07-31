@@ -188,7 +188,6 @@ public class DialogParser
                 _parseSpeaker();
                 break;
         }
-
     }
     public DialogParser(string dialogPath)
     {

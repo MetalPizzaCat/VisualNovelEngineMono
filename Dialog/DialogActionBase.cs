@@ -16,27 +16,21 @@ public enum DialogEventType
 }
 
 /// <summary>
-/// Base item for all of the actions that can happen in the dialog<br/>
-/// This handles both creation and freeing of the game objects
-/// that are necessary for the action to happen
+/// Enum that describes all of the possible dialog action types<br/>
+/// Exists purely to simplify displaying new action in the dialog
 /// </summary>
-public class DialogActionBase
+public enum DialogActionType
 {
-    /// <summary>
-    /// Dialog object that stores all of the necessary info
-    /// </summary>
-    protected Dialog Dialog;
+    None,
+    Text,
+    Option,
+    SceneChange,
+    SpeakerChange
+}
 
-    public DialogActionBase(Dialog dialog)
-    {
-        Dialog = dialog;
-    }
-    /// <summary>
-    /// Create all of the necessary buttons 
-    /// </summary>
-    public virtual void Init() { }
-    /// <summary>
-    /// Clear all of the items created by this action to allow next item to be displayed properly
-    /// </summary>
-    public virtual void Clear() { }
+/// <summary>
+/// Base data class for storing dialog actions 
+/// </summary>
+public abstract class DialogActionBase
+{
 }

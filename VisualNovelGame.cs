@@ -27,9 +27,12 @@ public class VisualNovelGame : Game
     public List<GameObject> GameObjects => _gameObjects;
 
     private bool _leftMouseButtonPressed = false;
-    public void AddUiElement(UserInterfaceElement elem)
+    public void AddUiElement(UserInterfaceElement elem, bool init = false)
     {
-        elem.LoadContent(Content);
+        if (init)
+        {
+            elem.LoadContent(Content);
+        }
         _ui.Add(elem);
     }
 
@@ -57,7 +60,7 @@ public class VisualNovelGame : Game
         testTexture = Content.Load<Texture2D>("mikeisilliconl");
 
         Button exitButton = new Button(this, new Vector2(0, 100), new Vector2(64, 64), new Rectangle(0, 0, 32, 32));
-        exitButton.OnClicked += () =>
+        exitButton.OnClicked += (UserInterfaceElement sender) =>
         {
             System.Console.WriteLine("You clicked me!");
 #if PERFORM_DIALOG_DUMP
