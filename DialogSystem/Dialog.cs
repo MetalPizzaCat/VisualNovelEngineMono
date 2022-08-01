@@ -15,7 +15,7 @@ public class Dialog
     /// Key value pair where key is the dialog label and value 
     /// is the action that will happen when dialog jumps to that label
     /// </summary>
-    public Dictionary<string, DialogActionBase> DialogItems { get; set; } = new Dictionary<string, DialogActionBase>();
+    public Dictionary<string, List<DialogSystem.DialogActionBase>> DialogItems { get; set; } = new Dictionary<string, List<DialogSystem.DialogActionBase>>();
 
     /// <summary>
     /// Everyone who speaks.
@@ -30,9 +30,9 @@ public class Dialog
         _currentLabel = newLabel ?? DialogItems.Keys.First();
         DialogActionBase item = DialogItems[_currentLabel];
         //not the best way of iterating 
-        if (item is DialogTextAction dialogText)
+        if (item is DialogSystem.DialogTextBlock dialogText)
         {
-            _displayDialogLines(dialogText);
+            _textBlock.ChangeActions()
         }
         else if (item is DialogOptionAction option)
         {
@@ -40,18 +40,9 @@ public class Dialog
         }
     }
 
-    private void _displayDialogLines(DialogTextAction action)
+    private void _showDialogText(DialogSystem.DialogTextBlock block)
     {
-        _reader.DialogTextAction = action;
-        _options.Visible = false;
-        _reader.Visible = true;
-    }
-
-    private void _displayDialogOptions(DialogOptionAction action)
-    {
-        _options.Action = action;
-        _options.Visible = true;
-        _reader.Visible = false;
+        _textBlock.
     }
 
     private void _onDialogEvent(DialogEventType type)
@@ -73,9 +64,9 @@ public class Dialog
     {
         Game = game;
         _reader = new DialogReader(Vector2.Zero, Vector2.Zero, game);
-        _reader.DialogEvent     += _onDialogEvent;
+        _reader.DialogEvent += _onDialogEvent;
         _options = new DialogOptions(Vector2.Zero, Vector2.Zero, game);
-        _options.DialogEvent    += _onDialogEvent;
+        _options.DialogEvent += _onDialogEvent;
 
         game.AddUiElement(_reader);
         game.AddUiElement(_options);

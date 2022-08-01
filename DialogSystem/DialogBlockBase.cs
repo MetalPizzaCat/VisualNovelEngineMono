@@ -23,7 +23,12 @@ public abstract class DialogBlockBase : UserInterfaceElement
     /// All actions that can be processed by the block
     /// </summary>
     protected List<DialogSystem.DialogActionBase> Actions = new List<DialogActionBase>();
-    
+
+    public virtual void ChangeActions(List<DialogSystem.DialogActionBase> actions)
+    {
+        Actions = actions;
+    }
+
     protected void RaiseActionEvent(DialogSystem.DialogActionBase action)
     {
         OnActionEvent?.Invoke(action);
