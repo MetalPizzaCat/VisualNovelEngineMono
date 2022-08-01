@@ -10,9 +10,6 @@ namespace UI
     /// </summary>
     public class UserInterfaceElement : GameObject
     {
-        public virtual bool Visible { get; set; } = true;
-        private bool _pendingKill = false;
-        public bool Valid => !_pendingKill;
 
         /// <summary>
         /// Position of the UI element on screen
@@ -45,11 +42,6 @@ namespace UI
         {
             Position = position;
             BoundingBoxSize = size;
-        }
-
-        public virtual void Destroy()
-        {
-            _pendingKill = true;
         }
     }
 }

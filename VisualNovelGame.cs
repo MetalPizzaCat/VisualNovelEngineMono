@@ -18,6 +18,7 @@ public class VisualNovelGame : Game
     private SpriteBatch _spriteBatch;
 
     private List<UserInterfaceElement> _ui = new List<UserInterfaceElement>();
+    private List<UserInterfaceElement> _uiStaging = new List<UserInterfaceElement>();
     Texture2D? testTexture;
     private StateManager _stateManager;
 
@@ -27,14 +28,14 @@ public class VisualNovelGame : Game
     public List<GameObject> GameObjects => _gameObjects;
 
     private bool _leftMouseButtonPressed = false;
-    public void AddUiElement(UserInterfaceElement elem, bool init = false)
+    public void AddUiElement(UserInterfaceElement elem, bool init = true)
     {
         if (init)
         {
             elem.LoadContent(Content);
             elem.Init();
         }
-        _ui.Add(elem);
+        _uiStaging.Add(elem);
     }
 
     public VisualNovelGame()
@@ -42,11 +43,7 @@ public class VisualNovelGame : Game
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
-
-        DialogParser parser = new DialogParser("./test.diag");
         _stateManager = new StateManager();
-        _dialog = parser.ParseDialog(this);
-        _dialog.Game = this;
     }
 
     protected override void Initialize()
@@ -71,11 +68,11 @@ public class VisualNovelGame : Game
 #endif
             Exit();
         };
-        _ui.Add(exitButton);
-        foreach (UserInterfaceElement elem in _ui)
-        {
-            elem.LoadContent(Content);
-        }
+        AddUiElement(exitButton, true);
+
+        DialogParser parser = new DialogParser("./test.diag");
+        _dialog = parser.ParseDialog(this);
+        _dialog.Game = this;
     }
 
     protected override void Update(GameTime gameTime)
@@ -99,15 +96,17 @@ public class VisualNovelGame : Game
                   )
                 {
                     elem.Click();
-                    //TODO: find a better way to prevent collection modification then just stopping
-                    //maybe add "staging collection" that will get merged with main one
-                    break;
                 }
             }
         }
         else if (mouse.LeftButton == ButtonState.Released && _leftMouseButtonPressed)
         {
             _leftMouseButtonPressed = false;
+        }
+        if (_uiStaging.Count > 0)
+        {
+            _ui.AddRange(_uiStaging);
+            _uiStaging.Clear();
         }
         base.Update(gameTime);
     }

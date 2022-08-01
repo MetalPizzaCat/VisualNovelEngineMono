@@ -11,8 +11,6 @@ public class DialogOptionButton : Button
     public delegate void OptionSelectedHandler(DialogOption option);
 
     public event OptionSelectedHandler? OnOptionSelected;
-    private Button _button;
-    private Label _label;
     private DialogOption _option;
     public DialogOptionButton
     (
