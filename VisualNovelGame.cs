@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 
 using UI;
+using DialogSystem;
 namespace VisualNovelMono;
 
 public class VisualNovelGame : Game
@@ -21,7 +22,7 @@ public class VisualNovelGame : Game
     private List<UserInterfaceElement> _uiStaging = new List<UserInterfaceElement>();
     Texture2D? testTexture;
     private StateManager _stateManager;
-
+    
     private Dialog _dialog;
     private List<GameObject> _gameObjects = new List<GameObject>();
 

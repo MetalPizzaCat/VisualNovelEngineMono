@@ -13,8 +13,9 @@ public class BlockData
 
     public readonly List<DialogSystem.DialogActionBase> Actions = new List<DialogActionBase>();
 
-    BlockData(BlockType type, List<DialogSystem.DialogActionBase> actions)
+    public BlockData(BlockType type, List<DialogSystem.DialogActionBase> actions)
     {
-
+        DataType = type;
+        Actions = actions;
     }
 }

@@ -15,7 +15,7 @@ public class Dialog
     /// Key value pair where key is the dialog label and value 
     /// is the action that will happen when dialog jumps to that label
     /// </summary>
-    public Dictionary<string, List<DialogSystem.DialogActionBase>> DialogItems { get; set; } = new Dictionary<string, List<DialogSystem.DialogActionBase>>();
+    public Dictionary<string, BlockData> DialogItems { get; set; } = new Dictionary<string, BlockData>();
 
     /// <summary>
     /// Everyone who speaks.
@@ -28,34 +28,34 @@ public class Dialog
     public void AdvanceDialog(string? newLabel)
     {
         _currentLabel = newLabel ?? DialogItems.Keys.First();
-        DialogActionBase item = DialogItems[_currentLabel];
-        //not the best way of iterating 
-        if (item is DialogSystem.DialogTextBlock dialogText)
+        switch (DialogItems[_currentLabel].DataType)
         {
-            _textBlock.ChangeActions()
-        }
-        else if (item is DialogOptionAction option)
-        {
-            _displayDialogOptions(option);
-        }
-    }
-
-    private void _showDialogText(DialogSystem.DialogTextBlock block)
-    {
-        _textBlock.
-    }
-
-    private void _onDialogEvent(DialogEventType type)
-    {
-        switch (type)
-        {
-            case DialogEventType.Jump:
-                System.Console.WriteLine("Jumping!");
-                //TODO: remove this temp solution
-                AdvanceDialog("{choice1}");
+            case BlockType.Text:
+                _textBlock.ChangeActions(DialogItems[_currentLabel].Actions);
                 break;
-            case DialogEventType.Exit:
-                System.Console.WriteLine("Exit!");
+            case BlockType.Option:
+                throw new System.NotImplementedException("Option dialog is not implemented");
+                break;
+            default:
+                throw new System.Exception("Invalid dialog block reached");
+        }
+    }
+
+    private void _onDialogEvent(DialogActionBase action)
+    {
+        switch (action.Action)
+        {
+            case DialogActionType.Jump:
+                if (action is JumpAction jump)
+                {
+                    AdvanceDialog(jump.Destination);
+                    System.Console.WriteLine($"Jumping to {jump.Destination}");
+                }
+                break;
+            case DialogActionType.Exit:
+                throw new System.Exception("Exiting normally, this is not exception :D");
+                break;
+            case DialogActionType.Speaker:
                 break;
         }
     }
@@ -63,12 +63,8 @@ public class Dialog
     public Dialog(VisualNovelMono.VisualNovelGame game)
     {
         Game = game;
-        _reader = new DialogReader(Vector2.Zero, Vector2.Zero, game);
-        _reader.DialogEvent += _onDialogEvent;
-        _options = new DialogOptions(Vector2.Zero, Vector2.Zero, game);
-        _options.DialogEvent += _onDialogEvent;
-
-        game.AddUiElement(_reader);
-        game.AddUiElement(_options);
+        _textBlock = new DialogTextBlock(new Vector2(300, 100), new Vector2(500, 500), game);
+        _textBlock.OnActionEvent += _onDialogEvent;
+        game.AddUiElement(_textBlock);
     }
 }

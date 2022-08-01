@@ -13,10 +13,15 @@ namespace DialogSystem;
 public class DialogParser
 {
     private string _filePath;
+
+    //(?&lt;=\[) is (?<=\[)
     /// <summary>
-    /// Regular Expression for checking if line is block type marker
+    /// Regular Expression for checking if line is block type marker<br/>
+    /// (?&lt;=\[) and (?=\]) use lookahead and lookbehind to make sure text is hidden in the brackets but avoid including the bracket<br/>
+    /// ([a-z])\w+ find a word
     /// </summary>
-    private readonly Regex _typeNameRegEx = new Regex(@"\[([a-z])\w+\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private readonly Regex _typeNameRegEx = new Regex(@"(?<=\[)([a-z])\w+(?=\])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private readonly Regex _blockNameRegEx = new Regex(@"(?<=\{)([a-z])\w+(?=\})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private List<Speaker> _speakers = new List<Speaker>();
     //the result dialog
@@ -49,21 +54,6 @@ public class DialogParser
         }
         return null;
     }
-    private DialogText _parseDialogLine(string line)
-    {
-        //all dialog follows 'name:text' standard
-        //if dialog has no specific speaker '0:' is used
-        //which is why we split based on first occurrence of ":" instead of anything else
-        int separatorIndex = line.IndexOf(":");
-        if (separatorIndex == -1)
-        {
-            throw new Exception("Invalid dialog line passed. All lines must follow 'name:text' standard");
-        }
-        string text = line.Substring(separatorIndex);
-        string speaker = line.Substring(0, separatorIndex);
-
-        return new DialogText(text, null);
-    }
 
     private void _parseSpeaker()
     {
@@ -85,7 +75,6 @@ public class DialogParser
             {
                 throw new Exception("Invalid property string. Property string should be 'name=value'");
             }
-
             switch (blocks[0].Trim())
             {
                 case "name":
@@ -108,66 +97,57 @@ public class DialogParser
     private void _parseTextDialog()
     {
         string? line = _getNextProperLine();
-        string label = line ?? throw new NullReferenceException("Dialog is missing a name label");
-        DialogTextAction action = new DialogTextAction(_dialog);
-        while ((line = _getNextProperLine()) != null)
+        string label = string.Empty;
+        //TODO: this is weird 
+        Match match = _blockNameRegEx.Match((line ?? throw new NullReferenceException("Dialog is missing a name label")));
+        if (match.Success)
         {
-            if (line == string.Empty)
-            {
-                throw new Exception("Dialog is missing 'exit' or 'jump' label");
-            }
-            //TODO: replace this with text-to-action-label converter
-            if (line.StartsWith("exit"))
-            {
-                //mark final action as game exit
-                break;
-            }
-            else if (line.StartsWith("jump"))
-            {
-                //mark final action as dialog jump
-                break;
-            }
-
-            action.Text.Add(_parseDialogLine(line));
+            label = match.Value;
         }
-        _dialog.DialogItems.Add(label, action);
+
+        List<DialogSystem.DialogActionBase> actions = new List<DialogActionBase>();
+        line = _getNextProperLine();
+        while (line != null || line == string.Empty)
+        {
+            //actions don't contain ":" symbol
+            if (line.Contains(":"))
+            {
+                int pos = line.IndexOf(":");
+                string name = line.Substring(0, pos);
+                int speakerId = _speakers.FindIndex(0, p => p.DisplayName == name);
+                //process as text
+                actions.Add(new DialogSystem.TextAction(line.Substring(pos), speakerId));
+            }
+            else
+            {
+                line.ToLower();
+                if (line.StartsWith("jump"))
+                {
+                    string[] bits = line.Split(" ");
+                    if (bits.Length < 2)
+                    {
+                        throw new Exception("Invalid amount of info passed to the jump command. It should be 'jump location'");
+                    }
+                    actions.Add(new JumpAction(bits[1]));
+                }
+                else if (line.StartsWith("exit"))
+                {
+                    actions.Add(new ExitAction());
+                }
+                else if (line.StartsWith("speaker"))
+                {
+                    //TODO: implement not implemented implementation
+                    throw new NotImplementedException();
+                }
+            }
+            line = _getNextProperLine();
+        }
+        _dialog.DialogItems.Add(label, new DialogSystem.BlockData(BlockType.Text, actions));
     }
 
     private void _parseDialogOption()
     {
-        /** Example
-        [options]
-        {choice1}
-        girl: No u
-        jump petty
-        girl: Sure i do, what's your point
-        jump die
-        girl: Basinga
-        jump dialog*/
-        string? line = _getNextProperLine();
-        string label = line ?? throw new NullReferenceException("Dialog is missing a name label");
-        DialogOptionAction action = new DialogOptionAction(_dialog);
-        line = _getNextProperLine();
-        while (line != null && line != string.Empty)
-        {
-            DialogText text = _parseDialogLine(line);
-            line = _getNextProperLine();
-            DialogEventType type = DialogEventType.Exit;
-            string[] actionInfo = line?.Split(" ") ?? throw new NullReferenceException("No dialog text provided");
-            switch (actionInfo[0])
-            {
-                case "exit":
-                    type = DialogEventType.Exit;
-                    break;
-                case "jump":
-                    type = DialogEventType.Jump;
-                    break;
-            }
-            //TODO: Fix dialog option not taking right text type
-            action.Options.Add(new DialogOption(type, text.Text, actionInfo[1]));
-            line = _getNextProperLine();
-        }
-        _dialog.DialogItems.Add(label, action);
+        throw new NotImplementedException();
     }
 
     private void _processType(string? line)
