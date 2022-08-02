@@ -17,6 +17,10 @@ public enum DialogActionType
     /// </summary>
     Speaker,
     /// <summary>
+    /// Perform option
+    /// </summary>
+    Option,
+    /// <summary>
     /// Jump to other block in the dialog
     /// </summary>
     Jump,

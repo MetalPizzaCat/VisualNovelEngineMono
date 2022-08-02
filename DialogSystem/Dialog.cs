@@ -11,6 +11,7 @@ public class Dialog
 {
     public VisualNovelMono.VisualNovelGame Game;
     private DialogSystem.DialogTextBlock _textBlock;
+    private DialogSystem.DialogOptionBlock _optionBlock;
     /// <summary>
     /// Key value pair where key is the dialog label and value 
     /// is the action that will happen when dialog jumps to that label
@@ -32,9 +33,13 @@ public class Dialog
         {
             case BlockType.Text:
                 _textBlock.ChangeActions(DialogItems[_currentLabel].Actions);
+                _optionBlock.Visible = false;
+                _textBlock.Visible = true;
                 break;
             case BlockType.Option:
-                throw new System.NotImplementedException("Option dialog is not implemented");
+                _optionBlock.ChangeActions(DialogItems[_currentLabel].Actions);
+                _optionBlock.Visible = true;
+                _textBlock.Visible = false;
                 break;
             default:
                 throw new System.Exception("Invalid dialog block reached");
@@ -66,5 +71,9 @@ public class Dialog
         _textBlock = new DialogTextBlock(new Vector2(300, 100), new Vector2(500, 500), game);
         _textBlock.OnActionEvent += _onDialogEvent;
         game.AddUiElement(_textBlock);
+
+        _optionBlock = new DialogOptionBlock(new Vector2(300, 100), new Vector2(500, 500), game);
+        _optionBlock.OnActionEvent += _onDialogEvent;
+        game.AddUiElement(_optionBlock);
     }
 }

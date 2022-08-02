@@ -32,11 +32,15 @@ namespace UI
         public event UnhoverEventHandler? OnUnhovered;
 
         /// <summary>
-        /// Function that calls of the event and handles all of the cosmetics
+        /// Function that calls of the event and handles all of the cosmetics<br/>
+        /// Ui element must be visible to be processed
         /// </summary>
         public virtual void Click()
         {
-            OnClicked?.Invoke(this);
+            if (Visible)
+            {
+                OnClicked?.Invoke(this);
+            }
         }
         public UserInterfaceElement(Vector2 position, Vector2 size, VisualNovelMono.VisualNovelGame game) : base(game)
         {

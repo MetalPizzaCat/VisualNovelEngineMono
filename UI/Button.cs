@@ -24,6 +24,19 @@ namespace UI
             TextureSourceRectangle = srcRect ?? ButtonTextureAtlas?.Bounds;
         }
 
+        public Button
+        (
+            VisualNovelMono.VisualNovelGame game,
+            string text,
+            Vector2 position,
+            Vector2 size,
+            Rectangle? srcRect = null
+        ) : base(position, size, game)
+        {
+            TextureSourceRectangle = srcRect ?? ButtonTextureAtlas?.Bounds;
+            Text = text;
+        }
+
         public override void Draw(SpriteBatch batch)
         {
             base.Draw(batch);

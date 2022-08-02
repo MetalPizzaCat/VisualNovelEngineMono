@@ -94,20 +94,44 @@ public class DialogParser
         }
     }
 
+    private DialogSystem.DialogActionBase? _parseActionLine(string line)
+    {
+        line.ToLower();
+        if (line.StartsWith("jump"))
+        {
+            string[] bits = line.Split(" ");
+            if (bits.Length < 2)
+            {
+                throw new Exception("Invalid amount of info passed to the jump command. It should be 'jump location'");
+            }
+            return new JumpAction(bits[1]);
+        }
+        else if (line.StartsWith("exit"))
+        {
+            return new ExitAction();
+        }
+        else if (line.StartsWith("speaker"))
+        {
+            //TODO: implement not implemented implementation
+            throw new NotImplementedException();
+        }
+        return null;
+    }
+
     private void _parseTextDialog()
     {
         string? line = _getNextProperLine();
         string label = string.Empty;
         //TODO: this is weird 
         Match match = _blockNameRegEx.Match((line ?? throw new NullReferenceException("Dialog is missing a name label")));
-        if (match.Success)
+        if (!match.Success)
         {
-            label = match.Value;
+            throw new Exception("Dialog block is missing name label");
         }
-
+        label = match.Value;
         List<DialogSystem.DialogActionBase> actions = new List<DialogActionBase>();
         line = _getNextProperLine();
-        while (line != null || line == string.Empty)
+        while (line != null && line != string.Empty)
         {
             //actions don't contain ":" symbol
             if (line.Contains(":"))
@@ -120,25 +144,7 @@ public class DialogParser
             }
             else
             {
-                line.ToLower();
-                if (line.StartsWith("jump"))
-                {
-                    string[] bits = line.Split(" ");
-                    if (bits.Length < 2)
-                    {
-                        throw new Exception("Invalid amount of info passed to the jump command. It should be 'jump location'");
-                    }
-                    actions.Add(new JumpAction(bits[1]));
-                }
-                else if (line.StartsWith("exit"))
-                {
-                    actions.Add(new ExitAction());
-                }
-                else if (line.StartsWith("speaker"))
-                {
-                    //TODO: implement not implemented implementation
-                    throw new NotImplementedException();
-                }
+                actions.Add(_parseActionLine(line) ?? throw new NullReferenceException("Failed to parse action line"));
             }
             line = _getNextProperLine();
         }
@@ -147,7 +153,36 @@ public class DialogParser
 
     private void _parseDialogOption()
     {
-        throw new NotImplementedException();
+        string? line = _getNextProperLine();
+        string label = string.Empty;
+        //TODO: this is weird 
+        Match match = _blockNameRegEx.Match((line ?? throw new NullReferenceException("Dialog is missing a name label")));
+        if (!match.Success)
+        {
+            throw new Exception("Dialog block is missing name label");
+        }
+        label = match.Value;
+        //current option
+
+        List<DialogSystem.DialogActionBase> actions = new List<DialogActionBase>();
+        line = _getNextProperLine();
+        while (line != null && line != string.Empty)
+        {
+            //this is an option
+            if (line.Contains(":"))
+            {
+                string[] tokens = line.Split(":");
+                //count is last index + 1 and we want to jump to action that is right after this one
+                DialogSystem.OptionAction option = new OptionAction(tokens[1], actions.Count + 1);
+                actions.Add(option);
+            }
+            else
+            {
+                actions.Add(_parseActionLine(line) ?? throw new NullReferenceException("Failed to parse action line"));
+            }
+            line = _getNextProperLine();
+        }
+        _dialog.DialogItems.Add(label, new DialogSystem.BlockData(BlockType.Option, actions));
     }
 
     private void _processType(string? line)

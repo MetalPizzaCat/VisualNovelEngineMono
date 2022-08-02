@@ -6,7 +6,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-
+using System.Diagnostics;
 using System.Collections.Generic;
 
 using UI;
@@ -22,7 +22,7 @@ public class VisualNovelGame : Game
     private List<UserInterfaceElement> _uiStaging = new List<UserInterfaceElement>();
     Texture2D? testTexture;
     private StateManager _stateManager;
-    
+
     private Dialog _dialog;
     private List<GameObject> _gameObjects = new List<GameObject>();
 
@@ -114,7 +114,7 @@ public class VisualNovelGame : Game
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(Color.CornflowerBlue);
+        GraphicsDevice.Clear(Color.Black);
 
         _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
         _spriteBatch.Draw(testTexture, new Vector2(0, 0), Color.White);
