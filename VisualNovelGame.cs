@@ -6,10 +6,11 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-
+using System.Diagnostics;
 using System.Collections.Generic;
 
 using UI;
+using DialogSystem;
 namespace VisualNovelMono;
 
 public class VisualNovelGame : Game
@@ -18,7 +19,7 @@ public class VisualNovelGame : Game
     private SpriteBatch _spriteBatch;
 
     private List<UserInterfaceElement> _ui = new List<UserInterfaceElement>();
-    Texture2D? testTexture;
+    private List<UserInterfaceElement> _uiStaging = new List<UserInterfaceElement>();
     private StateManager _stateManager;
 
     private Dialog _dialog;
@@ -27,14 +28,14 @@ public class VisualNovelGame : Game
     public List<GameObject> GameObjects => _gameObjects;
 
     private bool _leftMouseButtonPressed = false;
-    public void AddUiElement(UserInterfaceElement elem, bool init = false)
+    public void AddUiElement(UserInterfaceElement elem, bool init = true)
     {
         if (init)
         {
             elem.LoadContent(Content);
             elem.Init();
         }
-        _ui.Add(elem);
+        _uiStaging.Add(elem);
     }
 
     public VisualNovelGame()
@@ -42,11 +43,7 @@ public class VisualNovelGame : Game
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
-
-        DialogParser parser = new DialogParser("./test.diag");
         _stateManager = new StateManager();
-        _dialog = parser.ParseDialog(this);
-        _dialog.Game = this;
     }
 
     protected override void Initialize()
@@ -58,7 +55,6 @@ public class VisualNovelGame : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        testTexture = Content.Load<Texture2D>("mikeisilliconl");
 
         Button exitButton = new Button(this, new Vector2(0, 300), new Vector2(64, 64), new Rectangle(0, 0, 32, 32));
         exitButton.OnClicked += (UserInterfaceElement sender) =>
@@ -71,11 +67,13 @@ public class VisualNovelGame : Game
 #endif
             Exit();
         };
-        _ui.Add(exitButton);
-        foreach (UserInterfaceElement elem in _ui)
-        {
-            elem.LoadContent(Content);
-        }
+        AddUiElement(exitButton, true);
+
+        DialogParser parser = new DialogParser("./test.diag");
+        _dialog = parser.ParseDialog(this);
+        _dialog.Game = this;
+
+        _dialog.Init();
     }
 
     protected override void Update(GameTime gameTime)
@@ -91,17 +89,15 @@ public class VisualNovelGame : Game
             _leftMouseButtonPressed = true;
             foreach (UserInterfaceElement elem in _ui)
             {
-                if (
+                if
+                (
                     elem.Position.X <= mouse.X &&
                     elem.Position.Y <= mouse.Y &&
                     (elem.BoundingBoxSize.X + elem.Position.X) >= mouse.X &&
                     (elem.BoundingBoxSize.Y + elem.Position.Y) >= mouse.Y
-                  )
+                )
                 {
                     elem.Click();
-                    //TODO: find a better way to prevent collection modification then just stopping
-                    //maybe add "staging collection" that will get merged with main one
-                    break;
                 }
             }
         }
@@ -109,15 +105,29 @@ public class VisualNovelGame : Game
         {
             _leftMouseButtonPressed = false;
         }
+        if (_uiStaging.Count > 0)
+        {
+            _ui.AddRange(_uiStaging);
+            _uiStaging.Clear();
+        }
+
+        //clear dead ones
+        for (int i = _ui.Count - 1; i >= 0; i--)
+        {
+            if (!_ui[i].Valid)
+            {
+                _ui.RemoveAt(i);
+            }
+        }
+
         base.Update(gameTime);
     }
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(Color.CornflowerBlue);
+        GraphicsDevice.Clear(Color.Black);
 
         _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
-        _spriteBatch.Draw(testTexture, new Vector2(0, 0), Color.White);
         foreach (UserInterfaceElement elem in _ui)
         {
             elem.Draw(_spriteBatch);

@@ -10,9 +10,6 @@ namespace UI
     /// </summary>
     public class UserInterfaceElement : GameObject
     {
-        public virtual bool Visible { get; set; } = true;
-        private bool _pendingKill = false;
-        public bool Valid => !_pendingKill;
 
         /// <summary>
         /// Position of the UI element on screen
@@ -35,21 +32,20 @@ namespace UI
         public event UnhoverEventHandler? OnUnhovered;
 
         /// <summary>
-        /// Function that calls of the event and handles all of the cosmetics
+        /// Function that calls of the event and handles all of the cosmetics<br/>
+        /// Ui element must be visible to be processed
         /// </summary>
         public virtual void Click()
         {
-            OnClicked?.Invoke(this);
+            if (Visible)
+            {
+                OnClicked?.Invoke(this);
+            }
         }
         public UserInterfaceElement(Vector2 position, Vector2 size, VisualNovelMono.VisualNovelGame game) : base(game)
         {
             Position = position;
             BoundingBoxSize = size;
-        }
-
-        public virtual void Destroy()
-        {
-            _pendingKill = true;
         }
     }
 }

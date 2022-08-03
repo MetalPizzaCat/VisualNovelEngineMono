@@ -14,13 +14,13 @@
 name = skull
 #points to the name of the object that contains speaker info
 #this object is stored in yaml
-source = skull_speaker
+source = Skull
 position = left
 
 #speaker block does not create a brand new speaker, rather it defines how already defined speaker would work
 [speaker]
 name = girl
-source = skull
+source = Girl
 position = right
 
 [variables]

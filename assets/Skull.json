@@ -1,0 +1,7 @@
+{
+    "DisplayName": "All-Knowing Skull",
+    "DefaultTextureName": "default",
+    "TextureStateNames": {
+        "default": "Speakers/skull"
+    }
+}

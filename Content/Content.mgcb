@@ -73,18 +73,6 @@
 /processorParam:TextureFormat=Color
 /build:character_2_small.png
 
-#begin mikeisilliconl.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:mikeisilliconl.png
-
 #begin Roboto.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor

@@ -1,0 +1,7 @@
+{
+    "DisplayName": "Random girl",
+    "DefaultTextureName": "default",
+    "TextureStateNames": {
+        "default": "Speakers/person"
+    }
+}
