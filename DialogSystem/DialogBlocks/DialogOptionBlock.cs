@@ -71,5 +71,6 @@ public class DialogOptionBlock : DialogBlockBase
             AddChild(btn);
             btn.OnClicked += _onButtonClicked;
         }
+        _currentLine = 0;
     }
 }

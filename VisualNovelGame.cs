@@ -89,12 +89,13 @@ public class VisualNovelGame : Game
             _leftMouseButtonPressed = true;
             foreach (UserInterfaceElement elem in _ui)
             {
-                if (
+                if
+                (
                     elem.Position.X <= mouse.X &&
                     elem.Position.Y <= mouse.Y &&
                     (elem.BoundingBoxSize.X + elem.Position.X) >= mouse.X &&
                     (elem.BoundingBoxSize.Y + elem.Position.Y) >= mouse.Y
-                  )
+                )
                 {
                     elem.Click();
                 }
@@ -109,6 +110,16 @@ public class VisualNovelGame : Game
             _ui.AddRange(_uiStaging);
             _uiStaging.Clear();
         }
+
+        //clear dead ones
+        for (int i = _ui.Count - 1; i >= 0; i--)
+        {
+            if (!_ui[i].Valid)
+            {
+                _ui.RemoveAt(i);
+            }
+        }
+
         base.Update(gameTime);
     }
 

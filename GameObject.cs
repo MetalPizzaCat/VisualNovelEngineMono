@@ -10,6 +10,8 @@ using System.Collections.Generic;
 /// </summary>
 public class GameObject
 {
+    public GameObject? Parent { get; set; }
+
     private bool _visible = true;
     /// <summary>
     /// Should this be drawn on the screen
@@ -38,6 +40,7 @@ public class GameObject
     {
         Children.Add(child);
         child.Visible = Visible;
+        child.Parent = this;
     }
     public List<GameObject> Children { get; set; } = new List<GameObject>();
 
@@ -49,6 +52,7 @@ public class GameObject
     public virtual void Destroy()
     {
         _pendingKill = true;
+        Parent?.Children.Remove(this);
         foreach (GameObject child in Children)
         {
             child.Destroy();
