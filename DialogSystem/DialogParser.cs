@@ -5,6 +5,8 @@ using System;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 
+using Newtonsoft.Json;
+
 namespace DialogSystem;
 
 /// <summary>
@@ -23,7 +25,6 @@ public class DialogParser
     private readonly Regex _typeNameRegEx = new Regex(@"(?<=\[)([a-z])\w+(?=\])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private readonly Regex _blockNameRegEx = new Regex(@"(?<=\{)([a-z])\w+(?=\})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-    private List<Speaker> _speakers = new List<Speaker>();
     //the result dialog
     private Dialog _dialog;
 
@@ -32,6 +33,12 @@ public class DialogParser
     /// Keeping this as a local reference to avoid having to pass it around in arguments
     /// </summary>
     private StringReader _dialogFileReader;
+
+    private SpeakerData? _loadSpeakerData(string name)
+    {
+        string speakerInfo = File.ReadAllText($"./assets/{name.Trim()}.json");
+        return JsonConvert.DeserializeObject<SpeakerData>(speakerInfo);
+    }
 
     /// <summary>
     /// Gets next line from StringReader ignoring empty lines or comments.
@@ -68,6 +75,8 @@ public class DialogParser
             is speaker text
         */
         string? line = _getNextProperLine();
+        string speakerName = string.Empty;
+        SpeakerData? data = null;
         while (line != null && line != string.Empty)
         {
             string[] blocks = line.Split("=");
@@ -75,14 +84,17 @@ public class DialogParser
             {
                 throw new Exception("Invalid property string. Property string should be 'name=value'");
             }
+
             switch (blocks[0].Trim())
             {
                 case "name":
                     Console.WriteLine($"Speaker name is {blocks[1]}");
+                    speakerName = blocks[1];
                     break;
                 case "source":
                     // here we will have to reference a file that contains actual speaker info
                     Console.WriteLine($"Speaker source is {blocks[1]}");
+                    data = _loadSpeakerData(blocks[1]);
                     break;
                 case "position":
                     Console.WriteLine($"Speaker positions is {blocks[1]}");
@@ -90,8 +102,10 @@ public class DialogParser
                 default:
                     throw new Exception($"Invalid property found when parsing speaker info. Property: {blocks[0]}");
             }
+
             line = _getNextProperLine();
         }
+        _dialog.Speakers.Add(new Speaker(data ?? throw new NullReferenceException("No speaker data found"), speakerName, _dialog.Game));
     }
 
     private DialogSystem.DialogActionBase? _parseActionLine(string line)
@@ -138,7 +152,7 @@ public class DialogParser
             {
                 int pos = line.IndexOf(":");
                 string name = line.Substring(0, pos);
-                int speakerId = _speakers.FindIndex(0, p => p.DisplayName == name);
+                int speakerId = _dialog.Speakers.FindIndex(0, p => p.SpeakerData.DisplayName == name);
                 //process as text
                 actions.Add(new DialogSystem.TextAction(line.Substring(pos), speakerId));
             }

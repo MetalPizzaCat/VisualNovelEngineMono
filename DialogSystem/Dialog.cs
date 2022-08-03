@@ -76,4 +76,12 @@ public class Dialog
         _optionBlock.OnActionEvent += _onDialogEvent;
         game.AddUiElement(_optionBlock);
     }
+
+    public virtual void Init()
+    {
+        foreach (Speaker speaker in Speakers)
+        {
+            Game.AddUiElement(speaker);
+        }
+    }
 }

@@ -1,51 +1,50 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+
+using DialogSystem;
+
 using Newtonsoft.Json;
 
-public class Speaker : GameObject
+using System.Collections.Generic;
+
+/// <summary>
+/// Represents speaker on the screen
+/// </summary>
+public class Speaker : UI.UserInterfaceElement
 {
-    public string? DisplayName { get; set; }
-    public string? DisplayTextureName { get; set; }
     public bool Active { get; set; } = false;
     /// <summary>
     /// Position of the speaker on the screen
     /// </summary>
     public Vector2 Position { get; set; } = Vector2.Zero;
+    public SpeakerData SpeakerData { get; set; }
+    public Dictionary<string, Texture2D> StateTextures { get; set; } = new Dictionary<string, Texture2D>();
+    public string Name { get; set; } = "DEFAULT";
+    private Texture2D? _texture;
 
     public override void Draw(SpriteBatch spriteBatch)
     {
         base.Draw(spriteBatch);
         if (_texture != null)
         {
-            spriteBatch.Draw(_texture, Position, null, Active ? Color.White : Color.LightGray);
+            spriteBatch.Draw(_texture, new Rectangle(Position.ToPoint(), BoundingBoxSize.ToPoint()), null, Active ? Color.White : Color.LightGray);
         }
     }
 
     public override void LoadContent(ContentManager content)
     {
         base.LoadContent(content);
-        if (DisplayTextureName != null)
+        foreach (KeyValuePair<string, string> texture in SpeakerData.TextureStateNames)
         {
-            _texture ??= content.Load<Texture2D>(DisplayTextureName);
+            StateTextures.Add(texture.Key, content.Load<Texture2D>(texture.Value));
         }
+        _texture = StateTextures[SpeakerData.DefaultTextureName];
     }
 
-    public Speaker(string? name, string? textureName, VisualNovelMono.VisualNovelGame game) : base(game)
+    public Speaker(SpeakerData data, string name, VisualNovelMono.VisualNovelGame game) : base(Vector2.Zero, new Vector2(128, 128), game)
     {
-        DisplayName = name;
-        DisplayTextureName = textureName;
+        SpeakerData = data;
+        Name = name;
     }
-    public Speaker(string? name, Texture2D? texture, VisualNovelMono.VisualNovelGame game) : base(game)
-    {
-        DisplayName = name;
-        _texture = texture;
-    }
-
-    public Speaker() : base(null)
-    {
-
-    }
-
-    private Texture2D? _texture;
 }

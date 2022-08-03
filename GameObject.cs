@@ -10,6 +10,7 @@ using System.Collections.Generic;
 /// </summary>
 public class GameObject
 {
+    [JsonIgnore]
     public GameObject? Parent { get; set; }
 
     private bool _visible = true;

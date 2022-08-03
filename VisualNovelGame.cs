@@ -20,7 +20,6 @@ public class VisualNovelGame : Game
 
     private List<UserInterfaceElement> _ui = new List<UserInterfaceElement>();
     private List<UserInterfaceElement> _uiStaging = new List<UserInterfaceElement>();
-    Texture2D? testTexture;
     private StateManager _stateManager;
 
     private Dialog _dialog;
@@ -56,7 +55,6 @@ public class VisualNovelGame : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        testTexture = Content.Load<Texture2D>("mikeisilliconl");
 
         Button exitButton = new Button(this, new Vector2(0, 300), new Vector2(64, 64), new Rectangle(0, 0, 32, 32));
         exitButton.OnClicked += (UserInterfaceElement sender) =>
@@ -74,6 +72,8 @@ public class VisualNovelGame : Game
         DialogParser parser = new DialogParser("./test.diag");
         _dialog = parser.ParseDialog(this);
         _dialog.Game = this;
+
+        _dialog.Init();
     }
 
     protected override void Update(GameTime gameTime)
@@ -128,7 +128,6 @@ public class VisualNovelGame : Game
         GraphicsDevice.Clear(Color.Black);
 
         _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
-        _spriteBatch.Draw(testTexture, new Vector2(0, 0), Color.White);
         foreach (UserInterfaceElement elem in _ui)
         {
             elem.Draw(_spriteBatch);
