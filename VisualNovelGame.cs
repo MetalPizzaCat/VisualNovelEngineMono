@@ -53,8 +53,8 @@ public class VisualNovelGame : Game
 
         Window.AllowAltF4 = true;
 
-        _graphics.PreferredBackBufferHeight = 800;
-        _graphics.PreferredBackBufferHeight = 600;
+        _graphics.PreferredBackBufferWidth = 1280;
+        _graphics.PreferredBackBufferHeight = 720;
 
     }
 
@@ -84,7 +84,7 @@ public class VisualNovelGame : Game
         DialogParser parser = new DialogParser("./test.diag");
         _dialog = parser.ParseDialog(this);
         _dialog.Game = this;
-        _dialog.SceneSize = new Vector2(800, 600);
+        _dialog.SceneSize = new Vector2(1280, 720);
         _dialog.Init();
     }
 

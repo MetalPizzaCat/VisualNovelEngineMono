@@ -57,6 +57,7 @@ public class Speaker : UI.UserInterfaceElement
         _scenePosition = position;
 
         _sprite = new Sprite(Vector2.Zero, size, game);
+        _sprite.Layer = UI.RenderLayer.Speakers;
         game.AddUiElement(_sprite);
         AddChild(_sprite);
     }

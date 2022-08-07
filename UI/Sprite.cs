@@ -42,7 +42,7 @@ public class Sprite : UI.UserInterfaceElement
             spriteBatch.Draw(_texture, new Rectangle
                 (
                     (GlobalPosition * Game.Scale).ToPoint(), (BoundingBoxSize * Game.Scale * _scale).ToPoint()
-                ), null, Color);
+                ), null, Color, 0, Vector2.Zero, SpriteEffects.None, RenderDepthLayer);
         }
     }
 }

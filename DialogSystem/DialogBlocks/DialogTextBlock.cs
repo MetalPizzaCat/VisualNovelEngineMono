@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+
 using Microsoft.Xna.Framework;
 
 using UI;
@@ -16,6 +17,7 @@ public class DialogTextBlock : DialogSystem.DialogBlockBase
     {
         _label = new Label(game, "", Position + new Vector2(32, 32));
         _label.OnClicked += _onLabelClicked;
+        _label.Layer = RenderLayer.InteractionUI;
         AddChild(_label);
         game.AddUiElement(_label);
     }
