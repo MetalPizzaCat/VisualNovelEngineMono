@@ -18,11 +18,29 @@ public class VisualNovelGame : Game
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
+    /// <summary>
+    /// All of the ui elements in the game
+    /// </summary>
     private List<UserInterfaceElement> _ui = new List<UserInterfaceElement>();
+    /// <summary>
+    /// Array for storing newly added elements, that will be appended to main array at the end of the frame<br/>
+    /// Due to design of this engine, this array acts more like actual main array for the game
+    /// </summary>
     private List<UserInterfaceElement> _uiStaging = new List<UserInterfaceElement>();
     private StateManager _stateManager;
 
+    /// <summary>
+    /// State of keyboard in the previous state
+    /// </summary>
+    private KeyboardState _previousKeyState;
+
+    /// <summary>
+    /// Current dialog
+    /// </summary>
     private Dialog _dialog;
+    /// <summary>
+    /// All of game objects present
+    /// </summary>
     private List<GameObject> _gameObjects = new List<GameObject>();
 
     public List<GameObject> GameObjects => _gameObjects;
@@ -88,25 +106,32 @@ public class VisualNovelGame : Game
         _dialog.Init();
     }
 
-    protected override void Update(GameTime gameTime)
+    public void ChangeWindowSize(Vector2 scale)
     {
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-        {
-            Exit();
-        }
+        _graphics.PreferredBackBufferWidth = (int)(1280 * scale.X);
+        _graphics.PreferredBackBufferHeight = (int)(720 * scale.Y);
+        Scale = scale;
+        _graphics.ApplyChanges();
+    }
 
-        MouseState mouse = Mouse.GetState();
+    private void _inputKeyboard(GameTime gameTime)
+    {
         KeyboardState keyboard = Keyboard.GetState();
-        if (keyboard.IsKeyDown(Keys.Add))
+
+        if (keyboard.IsKeyDown(Keys.Add) && _previousKeyState.IsKeyUp(Keys.Add))
         {
-            Scale += new Vector2(0.5f, 0.5f);
-            _graphics.ApplyChanges();
+            ChangeWindowSize(Scale + new Vector2(0.25f, 0.25f));
         }
-        if (keyboard.IsKeyDown(Keys.Subtract))
+        if (keyboard.IsKeyDown(Keys.Subtract) && _previousKeyState.IsKeyUp(Keys.Subtract))
         {
-            Scale -= new Vector2(0.5f, 0.5f);
-            _graphics.ApplyChanges();
+            ChangeWindowSize(Scale - new Vector2(0.25f, 0.25f));
         }
+        _previousKeyState = keyboard;
+    }
+
+    private void _inputMouse(GameTime gameTime)
+    {
+        MouseState mouse = Mouse.GetState();
         if (mouse.LeftButton == ButtonState.Pressed && !_leftMouseButtonPressed)
         {
             _leftMouseButtonPressed = true;
@@ -128,6 +153,16 @@ public class VisualNovelGame : Game
         {
             _leftMouseButtonPressed = false;
         }
+    }
+    protected override void Update(GameTime gameTime)
+    {
+        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+        {
+            Exit();
+        }
+        _inputKeyboard(gameTime);
+        _inputMouse(gameTime);
+
         if (_uiStaging.Count > 0)
         {
             _ui.AddRange(_uiStaging);
