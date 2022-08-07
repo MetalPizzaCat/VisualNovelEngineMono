@@ -13,9 +13,13 @@ public enum DialogActionType
     /// </summary>
     Text,
     /// <summary>
-    /// Do something with speaker
+    /// Change speaker position
     /// </summary>
-    Speaker,
+    SpeakerMove,
+    /// <summary>
+    /// Change speaker's texture
+    /// </summary>
+    SpeakerStateChange,
     /// <summary>
     /// Perform option
     /// </summary>

@@ -47,6 +47,7 @@ girl: No u
 jump petty
 girl: Sure i do, what's your point
 jump die
+speaker girl change troll
 girl: Basinga
 jump dialog
 
@@ -54,6 +55,8 @@ jump dialog
 {petty}
 skull: no u
 girl: no u
+#moves character to desired location
+speaker girl move center
 skull: no u
 girl: no u
 #using 0 as the name will allow to avoid referencing an actual speaker

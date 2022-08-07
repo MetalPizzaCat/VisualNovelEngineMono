@@ -26,7 +26,7 @@ public class Dialog
     public Vector2 SpeakerSize { get; set; } = new Vector2(400, 400);
     public Vector2 SceneSize { get; set; } = Vector2.One;
 
-    public Vector2 CenterPosition => new Vector2(SceneSize.X / 2, 0);
+    public Vector2 CenterPosition => new Vector2(SceneSize.X / 2 - SpeakerSize.X / 2, 0);
     public Vector2 RightPosition => new Vector2(SceneSize.X - SpeakerSize.X, 0);
     public Vector2 LeftPosition => new Vector2(0, 0);
 
@@ -68,8 +68,16 @@ public class Dialog
                 break;
             case DialogActionType.Exit:
                 throw new System.Exception("Exiting normally, this is not exception :D");
+            case DialogActionType.SpeakerMove:
+                if (action is SpeakerMoveAction move)
+                {
+                    (
+                        Speakers.FirstOrDefault(p => p.Name == move.Target)
+                        ?? throw new System.NullReferenceException("Attempted to move non existent speaker")
+                    ).Position = GetSpeakerPosition(move.TargetPosition);
+                }
                 break;
-            case DialogActionType.Speaker:
+            case DialogActionType.SpeakerStateChange:
                 break;
         }
     }
@@ -84,6 +92,23 @@ public class Dialog
         _optionBlock = new DialogOptionBlock(new Vector2(300, 100), new Vector2(500, 500), game);
         _optionBlock.OnActionEvent += _onDialogEvent;
         game.AddUiElement(_optionBlock);
+    }
+
+    public Vector2 GetSpeakerPosition(SpeakerPosition position)
+    {
+        switch (position)
+        {
+            case SpeakerPosition.Center:
+                return CenterPosition;
+            case SpeakerPosition.Left:
+                return LeftPosition;
+            case SpeakerPosition.Right:
+                return RightPosition;
+            case SpeakerPosition.Offscreen:
+                return OffscreenPosition;
+            default:
+                return OffscreenPosition;
+        }
     }
 
     public virtual void Init()

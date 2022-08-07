@@ -90,7 +90,7 @@ public class DialogParser
             {
                 case "name":
                     Console.WriteLine($"Speaker name is {blocks[1]}");
-                    speakerName = blocks[1];
+                    speakerName = blocks[1].Trim();
                     break;
                 case "source":
                     // here we will have to reference a file that contains actual speaker info
@@ -128,8 +128,17 @@ public class DialogParser
         }
         else if (line.StartsWith("speaker"))
         {
-            //TODO: implement not implemented implementation
-            throw new NotImplementedException();
+            //speaker [who] [action] [info]
+            string[] blocks = line.Split(" ");
+            switch (blocks[2])
+            {
+                case "move":
+                    SpeakerPosition pos = SpeakerPosition.Offscreen;
+                    Enum.TryParse<SpeakerPosition>(blocks[3], true, out pos);
+                    return new SpeakerMoveAction(blocks[1].Trim(), pos);
+                case "change":
+                    return new SpeakerStateAction(blocks[1].Trim(), blocks[3]);
+            }
         }
         return null;
     }
