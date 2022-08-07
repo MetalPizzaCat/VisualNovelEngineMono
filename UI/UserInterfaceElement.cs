@@ -10,19 +10,6 @@ namespace UI
     /// </summary>
     public class UserInterfaceElement : GameObject
     {
-
-        /// <summary>
-        /// Position of the UI element on screen
-        /// </summary>
-        /// <value></value>
-        public Vector2 Position { get; set; }
-
-        /// <summary>
-        /// Rectangle that is used to define 
-        /// </summary>
-        /// <value></value>
-        public Vector2 BoundingBoxSize { get; set; }
-
         public delegate void ClickEventHandler(UserInterfaceElement sender);
         public delegate void HoverEventHandler();
         public delegate void UnhoverEventHandler();
@@ -42,6 +29,7 @@ namespace UI
                 OnClicked?.Invoke(this);
             }
         }
+        
         public UserInterfaceElement(Vector2 position, Vector2 size, VisualNovelMono.VisualNovelGame game) : base(game)
         {
             Position = position;

@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
 
 using Newtonsoft.Json;
 
@@ -12,6 +13,26 @@ public class GameObject
 {
     [JsonIgnore]
     public GameObject? Parent { get; set; }
+
+    /// <summary>
+    /// Position of the UI element on screen
+    /// </summary>
+    /// <value></value>
+    public Vector2 Position { get; set; }
+
+    public Vector2 GlobalPosition
+    {
+        get
+        {
+            return Position + (Parent?.GlobalPosition ?? Vector2.Zero);
+        }
+    }
+
+    /// <summary>
+    /// Rectangle that is used to define 
+    /// </summary>
+    /// <value></value>
+    public Vector2 BoundingBoxSize { get; set; }
 
     private bool _visible = true;
     /// <summary>

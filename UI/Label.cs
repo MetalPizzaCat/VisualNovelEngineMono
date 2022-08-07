@@ -51,7 +51,7 @@ namespace UI
             base.Draw(spriteBatch);
             if (Visible)
             {
-                spriteBatch.DrawString(_font, Text, Position, Color.White);
+                spriteBatch.DrawString(_font, Text, Position * Game.Scale, Color.White, 0, Vector2.Zero, Game.Scale, SpriteEffects.None, 0);
             }
         }
     }

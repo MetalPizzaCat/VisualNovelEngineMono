@@ -6,6 +6,14 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace DialogSystem;
 
+public enum SpeakerPosition
+{
+    Center,
+    Left,
+    Right,
+    Offscreen
+}
+
 /// <summary>
 /// Data class that stores speaker info that is loaded from config files
 /// </summary>

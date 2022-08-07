@@ -42,8 +42,11 @@ namespace UI
             base.Draw(batch);
             if (Visible)
             {
-                batch.Draw(ButtonTextureAtlas, new Rectangle(Position.ToPoint(), BoundingBoxSize.ToPoint()), TextureSourceRectangle, Color.White);
-                batch.DrawString(Font, Text ?? "no text lol", Position, Color.White);
+                batch.Draw(ButtonTextureAtlas, new Rectangle
+                (
+                    (Position * Game.Scale).ToPoint(), (BoundingBoxSize * Game.Scale).ToPoint()
+                ), TextureSourceRectangle, Color.White);
+                batch.DrawString(Font, Text ?? "no text lol", Position * Game.Scale, Color.White);
             }
         }
 

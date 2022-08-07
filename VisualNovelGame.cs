@@ -28,6 +28,12 @@ public class VisualNovelGame : Game
     public List<GameObject> GameObjects => _gameObjects;
 
     private bool _leftMouseButtonPressed = false;
+
+    /// <summary>
+    /// Scale of the window<br/>
+    /// Used for window resizing
+    /// </summary>
+    public Vector2 Scale { get; set; } = Vector2.One;
     public void AddUiElement(UserInterfaceElement elem, bool init = true)
     {
         if (init)
@@ -44,6 +50,12 @@ public class VisualNovelGame : Game
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
         _stateManager = new StateManager();
+
+        Window.AllowAltF4 = true;
+
+        _graphics.PreferredBackBufferHeight = 800;
+        _graphics.PreferredBackBufferHeight = 600;
+
     }
 
     protected override void Initialize()
@@ -72,7 +84,7 @@ public class VisualNovelGame : Game
         DialogParser parser = new DialogParser("./test.diag");
         _dialog = parser.ParseDialog(this);
         _dialog.Game = this;
-
+        _dialog.SceneSize = new Vector2(800, 600);
         _dialog.Init();
     }
 
@@ -84,6 +96,17 @@ public class VisualNovelGame : Game
         }
 
         MouseState mouse = Mouse.GetState();
+        KeyboardState keyboard = Keyboard.GetState();
+        if (keyboard.IsKeyDown(Keys.Add))
+        {
+            Scale += new Vector2(0.5f, 0.5f);
+            _graphics.ApplyChanges();
+        }
+        if (keyboard.IsKeyDown(Keys.Subtract))
+        {
+            Scale -= new Vector2(0.5f, 0.5f);
+            _graphics.ApplyChanges();
+        }
         if (mouse.LeftButton == ButtonState.Pressed && !_leftMouseButtonPressed)
         {
             _leftMouseButtonPressed = true;
@@ -128,6 +151,7 @@ public class VisualNovelGame : Game
         GraphicsDevice.Clear(Color.Black);
 
         _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
+
         foreach (UserInterfaceElement elem in _ui)
         {
             elem.Draw(_spriteBatch);

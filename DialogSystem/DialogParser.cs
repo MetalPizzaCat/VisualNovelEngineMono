@@ -77,6 +77,7 @@ public class DialogParser
         string? line = _getNextProperLine();
         string speakerName = string.Empty;
         SpeakerData? data = null;
+        SpeakerPosition pos = SpeakerPosition.Offscreen;
         while (line != null && line != string.Empty)
         {
             string[] blocks = line.Split("=");
@@ -98,6 +99,7 @@ public class DialogParser
                     break;
                 case "position":
                     Console.WriteLine($"Speaker positions is {blocks[1]}");
+                    Enum.TryParse<SpeakerPosition>(blocks[1].Trim(), true, out pos);
                     break;
                 default:
                     throw new Exception($"Invalid property found when parsing speaker info. Property: {blocks[0]}");
@@ -105,7 +107,7 @@ public class DialogParser
 
             line = _getNextProperLine();
         }
-        _dialog.Speakers.Add(new Speaker(data ?? throw new NullReferenceException("No speaker data found"), speakerName, _dialog.Game));
+        _dialog.Speakers.Add(new Speaker(_dialog, _dialog.SpeakerSize, pos, data ?? throw new NullReferenceException("No speaker data found"), speakerName, _dialog.Game));
     }
 
     private DialogSystem.DialogActionBase? _parseActionLine(string line)

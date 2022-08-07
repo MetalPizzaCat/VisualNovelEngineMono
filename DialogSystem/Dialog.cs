@@ -19,9 +19,18 @@ public class Dialog
     public Dictionary<string, BlockData> DialogItems { get; set; } = new Dictionary<string, BlockData>();
 
     /// <summary>
-    /// Everyone who speaks.
+    /// Everyone who speaks
     /// </summary>
     public List<Speaker> Speakers { get; set; } = new List<Speaker>();
+
+    public Vector2 SpeakerSize { get; set; } = new Vector2(400, 400);
+    public Vector2 SceneSize { get; set; } = Vector2.One;
+
+    public Vector2 CenterPosition => new Vector2(SceneSize.X / 2, 0);
+    public Vector2 RightPosition => new Vector2(SceneSize.X - SpeakerSize.X, 0);
+    public Vector2 LeftPosition => new Vector2(0, 0);
+
+    public Vector2 OffscreenPosition => new Vector2(SceneSize.X + 1, 0);
 
     private string? _currentLabel;
     public string? CurrentLabel => _currentLabel;
@@ -81,6 +90,21 @@ public class Dialog
     {
         foreach (Speaker speaker in Speakers)
         {
+            switch (speaker.ScenePosition)
+            {
+                case SpeakerPosition.Center:
+                    speaker.Position = CenterPosition;
+                    break;
+                case SpeakerPosition.Left:
+                    speaker.Position = LeftPosition;
+                    break;
+                case SpeakerPosition.Right:
+                    speaker.Position = RightPosition;
+                    break;
+                case SpeakerPosition.Offscreen:
+                    speaker.Position = OffscreenPosition;
+                    break;
+            }
             Game.AddUiElement(speaker);
         }
     }

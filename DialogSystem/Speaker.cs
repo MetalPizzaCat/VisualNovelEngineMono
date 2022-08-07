@@ -13,23 +13,25 @@ using System.Collections.Generic;
 /// </summary>
 public class Speaker : UI.UserInterfaceElement
 {
+    private Dialog _dialog;
+    private Sprite _sprite;
     public bool Active { get; set; } = false;
-    /// <summary>
-    /// Position of the speaker on the screen
-    /// </summary>
-    public Vector2 Position { get; set; } = Vector2.Zero;
+    private SpeakerPosition _scenePosition = SpeakerPosition.Offscreen;
+    public SpeakerPosition ScenePosition
+    {
+        get => _scenePosition;
+        set
+        {
+            _scenePosition = value;
+        }
+    }
     public SpeakerData SpeakerData { get; set; }
     public Dictionary<string, Texture2D> StateTextures { get; set; } = new Dictionary<string, Texture2D>();
     public string Name { get; set; } = "DEFAULT";
-    private Texture2D? _texture;
 
     public override void Draw(SpriteBatch spriteBatch)
     {
         base.Draw(spriteBatch);
-        if (_texture != null)
-        {
-            spriteBatch.Draw(_texture, new Rectangle(Position.ToPoint(), BoundingBoxSize.ToPoint()), null, Active ? Color.White : Color.LightGray);
-        }
     }
 
     public override void LoadContent(ContentManager content)
@@ -39,12 +41,23 @@ public class Speaker : UI.UserInterfaceElement
         {
             StateTextures.Add(texture.Key, content.Load<Texture2D>(texture.Value));
         }
-        _texture = StateTextures[SpeakerData.DefaultTextureName];
+        _sprite.Texture = StateTextures[SpeakerData.DefaultTextureName];
     }
 
-    public Speaker(SpeakerData data, string name, VisualNovelMono.VisualNovelGame game) : base(Vector2.Zero, new Vector2(128, 128), game)
+    public override void Init()
+    {
+        base.Init();
+    }
+
+    public Speaker(Dialog dialog, Vector2 size, SpeakerPosition position, SpeakerData data, string name, VisualNovelMono.VisualNovelGame game) : base(Vector2.Zero, new Vector2(128, 128), game)
     {
         SpeakerData = data;
         Name = name;
+        _dialog = dialog;
+        _scenePosition = position;
+
+        _sprite = new Sprite(Vector2.Zero, size, game);
+        game.AddUiElement(_sprite);
+        AddChild(_sprite);
     }
 }
