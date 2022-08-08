@@ -58,6 +58,9 @@ jump dialog
 #empty line can be used instead of "end" keyword but every block needs to have it's own "end"
 #this system also should never be able to go more then 2 levels deep
 end
+option: Mike...
+jump born
+end
 end
 [dialog]
 {petty}
@@ -77,3 +80,20 @@ jump introduction
 skull: just fucking die >:(
 #exit will just close the game
 exit
+
+[dialog]
+{born}
+skull: Do you remember being born?
+jump question
+
+[options]
+{question}
+option: windmill
+0: She went into the windmill
+0: But when i turned around windmill was gone
+end
+option: what?
+skull: HE PICKES UP THE TOOL AND HURTS ME
+skull: TURN OFF YOUR CONSOLE
+end
+end

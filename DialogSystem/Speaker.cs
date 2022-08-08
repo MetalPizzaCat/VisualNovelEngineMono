@@ -39,7 +39,7 @@ public class Speaker : UI.UserInterfaceElement
     public void Move(Vector2 newPosition)
     {
         _targetPosition = newPosition;
-        _speed = (_targetPosition.X - Position.X) < 0 ? -1 : 1;
+        _speed = (_targetPosition.X - Position.X) < 0 ? -10 : 10;
         _moving = true;
         OnBegunMovement?.Invoke();
     }
