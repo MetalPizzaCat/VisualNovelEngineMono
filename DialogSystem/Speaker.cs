@@ -13,8 +13,18 @@ using System.Collections.Generic;
 /// </summary>
 public class Speaker : UI.UserInterfaceElement
 {
+    public delegate void BeginMovementEventHandler();
+    public delegate void EndMovementEventHandler();
+
+    public event BeginMovementEventHandler OnBegunMovement;
+    public event EndMovementEventHandler OnFinishedMovement;
+
     private Dialog _dialog;
     private Sprite _sprite;
+    private Vector2 _targetPosition;
+    private bool _moving = false;
+    private float _speed = 1;
+
     public bool Active { get; set; } = false;
     private SpeakerPosition _scenePosition = SpeakerPosition.Offscreen;
     public SpeakerPosition ScenePosition
@@ -24,6 +34,13 @@ public class Speaker : UI.UserInterfaceElement
         {
             _scenePosition = value;
         }
+    }
+
+    public void Move(Vector2 newPosition)
+    {
+        _targetPosition = newPosition;
+        _speed = (_targetPosition.X - Position.X) < 0 ? -1 : 1;
+        _moving = true;
     }
     public SpeakerData SpeakerData { get; set; }
     public Dictionary<string, Texture2D> StateTextures { get; set; } = new Dictionary<string, Texture2D>();
@@ -60,5 +77,18 @@ public class Speaker : UI.UserInterfaceElement
         _sprite.Layer = UI.RenderLayer.Speakers;
         game.AddUiElement(_sprite);
         AddChild(_sprite);
+    }
+
+    public override void Update(GameTime gameTime)
+    {
+        base.Update(gameTime);
+        if (_moving)
+        {
+            Position += new Vector2(_speed, 0);
+            if (System.MathF.Abs(Position.X - _targetPosition.X) < 5f)
+            {
+                _moving = false;
+            }
+        }
     }
 }

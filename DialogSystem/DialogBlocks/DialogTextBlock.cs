@@ -48,7 +48,7 @@ public class DialogTextBlock : DialogSystem.DialogBlockBase
         }
         else
         {
-            throw new System.Exception("Unexcepted end of dialog reached");
+            throw new System.Exception("Unexpected end of dialog reached");
         }
     }
     public override void ChangeActions(List<DialogActionBase> actions)

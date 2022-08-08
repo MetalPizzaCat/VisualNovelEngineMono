@@ -74,7 +74,7 @@ public class Dialog
                     (
                         Speakers.FirstOrDefault(p => p.Name == move.Target)
                         ?? throw new System.NullReferenceException("Attempted to move non existent speaker")
-                    ).Position = GetSpeakerPosition(move.TargetPosition);
+                    ).Move(GetSpeakerPosition(move.TargetPosition));
                 }
                 break;
             case DialogActionType.SpeakerStateChange:

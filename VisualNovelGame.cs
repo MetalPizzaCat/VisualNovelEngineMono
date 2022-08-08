@@ -27,7 +27,16 @@ public class VisualNovelGame : Game
     /// Due to design of this engine, this array acts more like actual main array for the game
     /// </summary>
     private List<UserInterfaceElement> _uiStaging = new List<UserInterfaceElement>();
-    private StateManager _stateManager;
+    private GameState _currentState = GameState.Normal;
+
+    public GameState CurrentState
+    {
+        get => _currentState;
+        set
+        {
+            _currentState = value;
+        }
+    }
 
     /// <summary>
     /// State of keyboard in the previous state
@@ -67,7 +76,6 @@ public class VisualNovelGame : Game
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
-        _stateManager = new StateManager();
 
         Window.AllowAltF4 = true;
 
@@ -129,6 +137,14 @@ public class VisualNovelGame : Game
         _previousKeyState = keyboard;
     }
 
+    private void _updateObjects(GameTime gameTime)
+    {
+        foreach (UserInterfaceElement elem in _ui)
+        {
+            elem.Update(gameTime);
+        }
+    }
+
     private void _inputMouse(GameTime gameTime)
     {
         MouseState mouse = Mouse.GetState();
@@ -154,12 +170,14 @@ public class VisualNovelGame : Game
             _leftMouseButtonPressed = false;
         }
     }
+
     protected override void Update(GameTime gameTime)
     {
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
         {
             Exit();
         }
+        _updateObjects(gameTime);
         _inputKeyboard(gameTime);
         _inputMouse(gameTime);
 

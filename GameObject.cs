@@ -55,9 +55,18 @@ public class GameObject
 
     [JsonIgnore]
     public readonly VisualNovelMono.VisualNovelGame? Game;
+    /// <summary>
+    /// Call to load all of the assets used by this object<br/>
+    /// This can be called during or after initial content loading
+    /// </summary>
     public virtual void LoadContent(ContentManager content) { }
     public virtual void Draw(SpriteBatch spriteBatch) { }
     public virtual void Init() { }
+    /// <summary>
+    /// Called every frame BEFORE any of the input checks
+    /// </summary>
+    /// <param name="gameTime"></param>
+    public virtual void Update(GameTime gameTime) { }
     public void AddChild(GameObject child)
     {
         Children.Add(child);

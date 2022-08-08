@@ -1,36 +1,15 @@
 public enum GameState
 {
     /// <summary>
-    /// Dialog when player has absolutely no control over what is happening
-    /// and just has to embrace the text 
+    /// State when player normally interacts with the ui
     /// </summary>
-    Dialog,
+    Normal,
     /// <summary>
-    /// Player gets to choose one of the dialog options presented
+    /// State when player normally interacts with the ui
     /// </summary>
-    DialogOption,
+    Menu,
     /// <summary>
-    /// Player gets to choose stuff outside of dialog
-    /// Like choosing a target on the map
+    /// Game is playing dialog animation, so player can not interact with ui
     /// </summary>
-    FreeFormOption
-}
-public class StateManager
-{
-    private GameState _currentState;
-
-    public GameState State
-    {
-        get => _currentState;
-        set
-        {
-            //???
-            //wait where is code???
-            _currentState = value;
-        }
-    }
-    public StateManager()
-    {
-        _currentState = GameState.Dialog;
-    }
+    Animation,
 }
