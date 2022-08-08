@@ -3,13 +3,14 @@ namespace DialogSystem;
 public class OptionAction : DialogActionBase
 {
     /// <summary>
-    /// Where, in the block action list, will block jump to
+    /// Where will the dialog jump to when this option is selected
     /// </summary>
-    public int JumpLocation = 0;
+    /// <value></value>
+    public string JumpLocation { get; set; }
 
     public string Text { get; set; }
 
-    public OptionAction(string text, int jumpLocation = 0)
+    public OptionAction(string text, string jumpLocation)
     {
         _type = DialogActionType.Option;
         JumpLocation = jumpLocation;

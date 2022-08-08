@@ -21,7 +21,7 @@ position = left
 [speaker]
 name = girl
 source = Girl
-position = right
+position = offscreen
 
 [variables]
 USERNAME = Mieclesoft Bimbows
@@ -32,6 +32,8 @@ USERNAME = Mieclesoft Bimbows
 #it is used for moving around the dialog
 {introduction}
 skull: hello there child
+speaker girl move center
+speaker skull move right
 skull: or should i say $USERNAME$?
 skull: i can see your dreams
 girl: woah
@@ -43,14 +45,23 @@ jump choice1
 
 [options]
 {choice1}
-girl: No u
+option: No u
 jump petty
-girl: Sure i do, what's your point
-jump die
-speaker girl change troll
-girl: Basinga
-jump dialog
 
+option: Sure i do, what's your point
+#speaker girl change troll
+jump die
+
+option: Basinga
+jump dialog
+#end can be used to define end of the block
+#empty line can be used instead of "end" keyword but every block needs to have it's own "end"
+#this system also should never be able to go more then 2 levels deep
+end
+option: Mike...
+jump born
+end
+end
 [dialog]
 {petty}
 skull: no u
@@ -69,3 +80,20 @@ jump introduction
 skull: just fucking die >:(
 #exit will just close the game
 exit
+
+[dialog]
+{born}
+skull: Do you remember being born?
+jump question
+
+[options]
+{question}
+option: windmill
+0: She went into the windmill
+0: But when i turned around windmill was gone
+end
+option: what?
+skull: HE PICKES UP THE TOOL AND HURTS ME
+skull: TURN OFF YOUR CONSOLE
+end
+end

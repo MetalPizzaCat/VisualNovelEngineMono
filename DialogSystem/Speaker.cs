@@ -16,8 +16,8 @@ public class Speaker : UI.UserInterfaceElement
     public delegate void BeginMovementEventHandler();
     public delegate void EndMovementEventHandler();
 
-    public event BeginMovementEventHandler OnBegunMovement;
-    public event EndMovementEventHandler OnFinishedMovement;
+    public event BeginMovementEventHandler? OnBegunMovement;
+    public event EndMovementEventHandler? OnFinishedMovement;
 
     private Dialog _dialog;
     private Sprite _sprite;
@@ -39,8 +39,9 @@ public class Speaker : UI.UserInterfaceElement
     public void Move(Vector2 newPosition)
     {
         _targetPosition = newPosition;
-        _speed = (_targetPosition.X - Position.X) < 0 ? -1 : 1;
+        _speed = (_targetPosition.X - Position.X) < 0 ? -10 : 10;
         _moving = true;
+        OnBegunMovement?.Invoke();
     }
     public SpeakerData SpeakerData { get; set; }
     public Dictionary<string, Texture2D> StateTextures { get; set; } = new Dictionary<string, Texture2D>();
@@ -88,6 +89,7 @@ public class Speaker : UI.UserInterfaceElement
             if (System.MathF.Abs(Position.X - _targetPosition.X) < 5f)
             {
                 _moving = false;
+                OnFinishedMovement?.Invoke();
             }
         }
     }
