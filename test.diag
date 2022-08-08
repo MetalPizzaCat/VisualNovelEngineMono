@@ -43,13 +43,16 @@ jump choice1
 
 [options]
 {choice1}
-girl: No u
+option: No u
 jump petty
-girl: Sure i do, what's your point
+
+option: Sure i do, what's your point
+#speaker girl change troll
 jump die
-speaker girl change troll
-girl: Basinga
+
+option: Basinga
 jump dialog
+
 
 [dialog]
 {petty}

@@ -6,25 +6,9 @@ using System.Linq;
 using UI;
 namespace DialogSystem;
 
-/**
-example of the option block
-option1
-action 
-action
-option2
-action
-option3
-action
-default:none
-action
-
-if option1 is selected block will perform every action until option2 is hit
-if no jump or exit action is provided
-dialog will then jump to default:none block and execute every action located there
-*/
 /// <summary>
 /// Option block provides user with ability to select an option<br/>
-/// Once option is selected it will perform every action(until next option is hit)
+/// Once option is selected game will jump to an anonoymous text block, which will execute rest of the actions
 /// </summary>
 public class DialogOptionBlock : DialogBlockBase
 {
@@ -35,20 +19,11 @@ public class DialogOptionBlock : DialogBlockBase
 
     }
 
-    private void _executeActions()
-    {
-        while (Actions[_currentLine].Action != DialogActionType.Option)
-        {
-            RaiseActionEvent(Actions[_currentLine++]);
-        }
-    }
-
     private void _onButtonClicked(UserInterfaceElement sender)
     {
         if (sender is DialogOptionButton button)
         {
-            _currentLine = button.Option.JumpLocation;
-            _executeActions();
+            RaiseActionEvent(new JumpAction(button.Option.JumpLocation));
         }
     }
 

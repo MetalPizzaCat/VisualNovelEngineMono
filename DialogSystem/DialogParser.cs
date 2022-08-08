@@ -1,5 +1,3 @@
-
-
 using System.IO;
 using System;
 using System.Text.RegularExpressions;
@@ -143,20 +141,17 @@ public class DialogParser
         return null;
     }
 
-    private void _parseTextDialog()
+    /// <summary>
+    /// This function goes over the actual data block of the text block<br/>
+    /// Functions were split so that embedded blocks would be easier to parse
+    /// </summary>
+    /// <returns>List of actions that were in the blocks</returns>
+    private List<DialogSystem.DialogActionBase> _parseTextDialogData()
     {
-        string? line = _getNextProperLine();
-        string label = string.Empty;
-        //TODO: this is weird 
-        Match match = _blockNameRegEx.Match((line ?? throw new NullReferenceException("Dialog is missing a name label")));
-        if (!match.Success)
-        {
-            throw new Exception("Dialog block is missing name label");
-        }
-        label = match.Value;
         List<DialogSystem.DialogActionBase> actions = new List<DialogActionBase>();
-        line = _getNextProperLine();
-        while (line != null && line != string.Empty)
+        string? line = _getNextProperLine();
+        //blocks ends if there is End Of File, empty line or label that doesn't belong in the text block
+        while (line != null && line != string.Empty && !line.StartsWith("option"))
         {
             //actions don't contain ":" symbol
             if (line.Contains(":"))
@@ -173,7 +168,21 @@ public class DialogParser
             }
             line = _getNextProperLine();
         }
-        _dialog.DialogItems.Add(label, new DialogSystem.BlockData(BlockType.Text, actions));
+        return actions;
+    }
+
+    private void _parseTextDialog()
+    {
+        string? line = _getNextProperLine();
+        string label = string.Empty;
+        //TODO: this is weird 
+        Match match = _blockNameRegEx.Match((line ?? throw new NullReferenceException("Dialog is missing a name label")));
+        if (!match.Success)
+        {
+            throw new Exception("Dialog block is missing name label");
+        }
+        label = match.Value;
+        _dialog.DialogItems.Add(label, new DialogSystem.BlockData(BlockType.Text, _parseTextDialogData()));
     }
 
     private void _parseDialogOption()
@@ -191,6 +200,13 @@ public class DialogParser
 
         List<DialogSystem.DialogActionBase> actions = new List<DialogActionBase>();
         line = _getNextProperLine();
+        /**
+        The way option reading works is by reading option line itself and then parsing everything till end of option/block 
+        as an "anonymous" text block
+        This way dialog displaying logic doesn't need to be duplicated
+        */
+        int jumpIndex = 0;
+        //read lines until have stuff to read
         while (line != null && line != string.Empty)
         {
             //this is an option
@@ -198,12 +214,9 @@ public class DialogParser
             {
                 string[] tokens = line.Split(":");
                 //count is last index + 1 and we want to jump to action that is right after this one
-                DialogSystem.OptionAction option = new OptionAction(tokens[1], actions.Count + 1);
+                DialogSystem.OptionAction option = new OptionAction(tokens[1], $"{label}_AUTO_GEN_{jumpIndex}");
                 actions.Add(option);
-            }
-            else
-            {
-                actions.Add(_parseActionLine(line) ?? throw new NullReferenceException("Failed to parse action line"));
+                _dialog.DialogItems.Add($"{label}_AUTO_GEN_{jumpIndex++}", new DialogSystem.BlockData(BlockType.Text, _parseTextDialogData()));
             }
             line = _getNextProperLine();
         }
