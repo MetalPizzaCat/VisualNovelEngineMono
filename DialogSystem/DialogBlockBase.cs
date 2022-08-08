@@ -13,6 +13,11 @@ namespace DialogSystem;
 /// </summary>
 public abstract class DialogBlockBase : UserInterfaceElement
 {
+    /// <summary>
+    /// Current dialog
+    /// </summary>
+    protected Dialog Dialog;
+
     public delegate void ActionEventHandler(DialogSystem.DialogActionBase action);
 
     /// <summary>
@@ -33,5 +38,8 @@ public abstract class DialogBlockBase : UserInterfaceElement
     {
         OnActionEvent?.Invoke(action);
     }
-    public DialogBlockBase(Vector2 position, Vector2 size, VisualNovelMono.VisualNovelGame game) : base(position, size, game) { }
+    public DialogBlockBase(Dialog dialog, Vector2 position, Vector2 size, VisualNovelMono.VisualNovelGame game) : base(position, size, game)
+    {
+        Dialog = dialog;
+    }
 }

@@ -85,11 +85,11 @@ public class Dialog
     public Dialog(VisualNovelMono.VisualNovelGame game)
     {
         Game = game;
-        _textBlock = new DialogTextBlock(new Vector2(100, 500), new Vector2(500, 500), game);
+        _textBlock = new DialogTextBlock(this, new Vector2(100, 500), new Vector2(500, 500), game);
         _textBlock.OnActionEvent += _onDialogEvent;
         game.AddUiElement(_textBlock);
 
-        _optionBlock = new DialogOptionBlock(new Vector2(300, 100), new Vector2(500, 500), game);
+        _optionBlock = new DialogOptionBlock(this, new Vector2(300, 100), new Vector2(500, 500), game);
         _optionBlock.OnActionEvent += _onDialogEvent;
         game.AddUiElement(_optionBlock);
     }

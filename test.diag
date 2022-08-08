@@ -33,9 +33,9 @@ USERNAME = Mieclesoft Bimbows
 {introduction}
 skull: hello there child
 speaker girl move center
-speaker skull move right
 skull: or should i say $USERNAME$?
 skull: i can see your dreams
+speaker skull move right
 girl: woah
 girl: i don't care
 skull: u suck
@@ -91,6 +91,7 @@ jump question
 option: windmill
 0: She went into the windmill
 0: But when i turned around windmill was gone
+exit
 end
 option: what?
 skull: HE PICKES UP THE TOOL AND HURTS ME

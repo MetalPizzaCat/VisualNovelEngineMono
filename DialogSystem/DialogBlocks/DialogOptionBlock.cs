@@ -14,7 +14,7 @@ public class DialogOptionBlock : DialogBlockBase
 {
     private List<DialogOptionButton> _options = new List<DialogOptionButton>();
     private int _currentLine = 0;
-    public DialogOptionBlock(Vector2 position, Vector2 size, VisualNovelMono.VisualNovelGame game) : base(position, size, game)
+    public DialogOptionBlock(Dialog dialog, Vector2 position, Vector2 size, VisualNovelMono.VisualNovelGame game) : base(dialog, position, size, game)
     {
 
     }
@@ -40,7 +40,7 @@ public class DialogOptionBlock : DialogBlockBase
         int i = 0;
         foreach (DialogActionBase option in options)
         {
-            DialogOptionButton btn = new DialogOptionButton(option as OptionAction, Game, new Vector2(0, i++ * 64) + Position, new Vector2(64, 64));
+            DialogOptionButton btn = new DialogOptionButton(option as OptionAction, Game, new Vector2(0, i++ * 64) + Position, new Vector2(500, 64));
             _options.Add(btn);
             Game.AddUiElement(btn);
             AddChild(btn);

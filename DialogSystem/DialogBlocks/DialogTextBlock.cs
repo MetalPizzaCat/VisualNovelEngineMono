@@ -12,14 +12,20 @@ namespace DialogSystem;
 public class DialogTextBlock : DialogSystem.DialogBlockBase
 {
     private Label _label;
+    private Label _speakerNameLabel;
     private int _currentLine = 0;
-    public DialogTextBlock(Vector2 position, Vector2 size, VisualNovelMono.VisualNovelGame game) : base(position, size, game)
+    public DialogTextBlock(Dialog dialog, Vector2 position, Vector2 size, VisualNovelMono.VisualNovelGame game) : base(dialog, position, size, game)
     {
-        _label = new Label(game, "", Position + new Vector2(32, 32));
+        _label = new Label(game, "", Position + new Vector2(32, 64));
         _label.OnClicked += _onLabelClicked;
         _label.Layer = RenderLayer.InteractionUI;
         AddChild(_label);
         game.AddUiElement(_label);
+
+        _speakerNameLabel = new Label(game, "", Position);
+        _label.Layer = RenderLayer.InteractionUI;
+        AddChild(_speakerNameLabel);
+        game.AddUiElement(_speakerNameLabel);
     }
     private void _changeLine(int lineId)
     {
@@ -28,11 +34,13 @@ public class DialogTextBlock : DialogSystem.DialogBlockBase
         {
             //we only care about text action, so everything else is passed to dialog
             case DialogActionType.Text:
-                _label.Text =
-                    (
-                        (Actions[_currentLine] as DialogSystem.TextAction)
-                        ?? throw new System.Exception("Invalid action passed under TextAction label")
-                    ).Text;
+                if (Actions[_currentLine] is DialogSystem.TextAction text)
+                {
+                    _label.Text = text.Text;
+                    _speakerNameLabel.Text = text.Speaker >= 0 ?
+                        Dialog.Speakers[text.Speaker].SpeakerData.DisplayName :
+                        string.Empty;
+                }
                 break;
             default:
                 RaiseActionEvent(Actions[_currentLine]);

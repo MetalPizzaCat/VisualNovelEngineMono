@@ -38,10 +38,13 @@ public class Speaker : UI.UserInterfaceElement
 
     public void Move(Vector2 newPosition)
     {
-        _targetPosition = newPosition;
-        _speed = (_targetPosition.X - Position.X) < 0 ? -10 : 10;
-        _moving = true;
-        OnBegunMovement?.Invoke();
+        if (Position != newPosition)
+        {
+            _targetPosition = newPosition;
+            _speed = (_targetPosition.X - Position.X) < 0 ? -10 : 10;
+            _moving = true;
+            OnBegunMovement?.Invoke();
+        }
     }
     public SpeakerData SpeakerData { get; set; }
     public Dictionary<string, Texture2D> StateTextures { get; set; } = new Dictionary<string, Texture2D>();
@@ -86,7 +89,7 @@ public class Speaker : UI.UserInterfaceElement
         if (_moving)
         {
             Position += new Vector2(_speed, 0);
-            if (System.MathF.Abs(Position.X - _targetPosition.X) < 5f)
+            if (System.MathF.Abs(Position.X - _targetPosition.X) <= System.MathF.Abs(_speed))
             {
                 _moving = false;
                 OnFinishedMovement?.Invoke();

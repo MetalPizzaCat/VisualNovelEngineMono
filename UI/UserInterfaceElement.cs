@@ -20,12 +20,16 @@ namespace UI
     public class UserInterfaceElement : GameObject
     {
         public delegate void ClickEventHandler(UserInterfaceElement sender);
-        public delegate void HoverEventHandler();
-        public delegate void UnhoverEventHandler();
+        public delegate void MouseEnterEventHandler(UserInterfaceElement sender);
+        public delegate void MouseLeaveEventHandler(UserInterfaceElement sender);
 
         public event ClickEventHandler? OnClicked;
-        public event HoverEventHandler? OnHoveredOver;
-        public event UnhoverEventHandler? OnUnhovered;
+        public event MouseEnterEventHandler? OnMouseEntered;
+        public event MouseLeaveEventHandler? MouseLeft;
+
+        private bool _isMouseInside = false;
+
+        public bool IsMouseInside => _isMouseInside;
 
         public RenderLayer Layer = RenderLayer.Default;
 
@@ -40,6 +44,24 @@ namespace UI
             if (Visible)
             {
                 OnClicked?.Invoke(this);
+            }
+        }
+
+        public virtual void EnterMouse()
+        {
+            if (Visible)
+            {
+                OnMouseEntered?.Invoke(this);
+                _isMouseInside = true;
+            }
+        }
+
+        public virtual void LeaveMouse()
+        {
+            if (Visible)
+            {
+                MouseLeft?.Invoke(this);
+                _isMouseInside = false;
             }
         }
 

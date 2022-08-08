@@ -11,7 +11,28 @@ namespace UI
     {
         public Texture2D? ButtonTextureAtlas { get; set; }
         public Rectangle? TextureSourceRectangle;
-        public string? Text { get; set; }
+
+        private string? _text;
+        public string? Text
+        {
+            get => _text;
+            set
+            {
+                if (Font != null && value != null)
+                {
+                    Vector2 bBoxSize = Font.MeasureString(value);
+                    //this way we ensure that bounding box is big enough
+                    // for text and tries to stay as big as user defined it
+                    Vector2 res = new Vector2
+                    (
+                        bBoxSize.X > BoundingBoxSize.X ? bBoxSize.X : BoundingBoxSize.X,
+                        bBoxSize.Y > BoundingBoxSize.Y ? bBoxSize.Y : BoundingBoxSize.Y
+                    );
+                    BoundingBoxSize = res;
+                }
+                _text = value;
+            }
+        }
         /// <summary>
         /// Font that will be used to display text
         /// Note: because of how monogame handles assets you can call "load" as much as you want
@@ -34,7 +55,7 @@ namespace UI
         ) : base(position, size, game)
         {
             TextureSourceRectangle = srcRect ?? ButtonTextureAtlas?.Bounds;
-            Text = text;
+            _text = text;
         }
 
         public override void Draw(SpriteBatch batch)
@@ -46,6 +67,7 @@ namespace UI
                 (
                     (Position * Game.Scale).ToPoint(), (BoundingBoxSize * Game.Scale).ToPoint()
                 ), TextureSourceRectangle, Color.White);
+
                 batch.DrawString(Font, Text ?? "no text lol", Position * Game.Scale, Color.White);
             }
         }
@@ -54,7 +76,8 @@ namespace UI
         {
             base.LoadContent(content);
             Font = content.Load<SpriteFont>("Roboto");
-            ButtonTextureAtlas ??= content.Load<Texture2D>("buttons_small");
+            ButtonTextureAtlas ??= content.Load<Texture2D>("UI/transparent_button");
+            Text = _text;
         }
     }
 }

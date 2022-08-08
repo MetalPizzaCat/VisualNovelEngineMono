@@ -157,10 +157,10 @@ public class DialogParser
             if (line.Contains(":"))
             {
                 int pos = line.IndexOf(":");
-                string name = line.Substring(0, pos);
-                int speakerId = _dialog.Speakers.FindIndex(0, p => p.SpeakerData.DisplayName == name);
+                string name = line.Substring(0, pos).Trim();
+                int speakerId = _dialog.Speakers.FindIndex(0, p => p.Name == name);
                 //process as text
-                actions.Add(new DialogSystem.TextAction(line.Substring(pos), speakerId));
+                actions.Add(new DialogSystem.TextAction(line.Substring(pos + 1).Trim(), speakerId));
             }
             else
             {

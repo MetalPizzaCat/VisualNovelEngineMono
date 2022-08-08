@@ -43,6 +43,8 @@ public class VisualNovelGame : Game
     /// </summary>
     private KeyboardState _previousKeyState;
 
+    private MouseState _previousMouseState;
+
     /// <summary>
     /// Current dialog
     /// </summary>
@@ -53,8 +55,6 @@ public class VisualNovelGame : Game
     private List<GameObject> _gameObjects = new List<GameObject>();
 
     public List<GameObject> GameObjects => _gameObjects;
-
-    private bool _leftMouseButtonPressed = false;
 
     /// <summary>
     /// Scale of the window<br/>
@@ -148,28 +148,35 @@ public class VisualNovelGame : Game
     private void _inputMouse(GameTime gameTime)
     {
         MouseState mouse = Mouse.GetState();
-        if (mouse.LeftButton == ButtonState.Pressed && !_leftMouseButtonPressed)
+
+        foreach (UserInterfaceElement elem in _ui)
         {
-            _leftMouseButtonPressed = true;
-            foreach (UserInterfaceElement elem in _ui)
+            if
+            (
+                elem.Position.X <= mouse.X &&
+                elem.Position.Y <= mouse.Y &&
+                (elem.BoundingBoxSize.X + elem.Position.X) >= mouse.X &&
+                (elem.BoundingBoxSize.Y + elem.Position.Y) >= mouse.Y
+            )
             {
-                if
-                (
-                    elem.Position.X <= mouse.X &&
-                    elem.Position.Y <= mouse.Y &&
-                    (elem.BoundingBoxSize.X + elem.Position.X) >= mouse.X &&
-                    (elem.BoundingBoxSize.Y + elem.Position.Y) >= mouse.Y
-                )
+                if (mouse.LeftButton == ButtonState.Pressed && _previousMouseState.LeftButton == ButtonState.Released)
                 {
                     elem.Click();
                 }
+                else
+                {
+                    elem.EnterMouse();
+                }
+            }
+            else if (elem.IsMouseInside)
+            {
+                elem.LeaveMouse();
             }
         }
-        else if (mouse.LeftButton == ButtonState.Released && _leftMouseButtonPressed)
-        {
-            _leftMouseButtonPressed = false;
-        }
+        _previousMouseState = mouse;
     }
+
+
 
     protected override void Update(GameTime gameTime)
     {
