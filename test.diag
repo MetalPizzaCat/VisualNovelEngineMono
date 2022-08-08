@@ -21,7 +21,7 @@ position = left
 [speaker]
 name = girl
 source = Girl
-position = right
+position = offscreen
 
 [variables]
 USERNAME = Mieclesoft Bimbows
@@ -32,6 +32,8 @@ USERNAME = Mieclesoft Bimbows
 #it is used for moving around the dialog
 {introduction}
 skull: hello there child
+speaker girl move center
+speaker skull move right
 skull: or should i say $USERNAME$?
 skull: i can see your dreams
 girl: woah
@@ -52,8 +54,11 @@ jump die
 
 option: Basinga
 jump dialog
-
-
+#end can be used to define end of the block
+#empty line can be used instead of "end" keyword but every block needs to have it's own "end"
+#this system also should never be able to go more then 2 levels deep
+end
+end
 [dialog]
 {petty}
 skull: no u

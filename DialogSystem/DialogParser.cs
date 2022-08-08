@@ -151,7 +151,7 @@ public class DialogParser
         List<DialogSystem.DialogActionBase> actions = new List<DialogActionBase>();
         string? line = _getNextProperLine();
         //blocks ends if there is End Of File, empty line or label that doesn't belong in the text block
-        while (line != null && line != string.Empty && !line.StartsWith("option"))
+        while (line != null && line != string.Empty && line != "end")
         {
             //actions don't contain ":" symbol
             if (line.Contains(":"))
@@ -207,7 +207,7 @@ public class DialogParser
         */
         int jumpIndex = 0;
         //read lines until have stuff to read
-        while (line != null && line != string.Empty)
+        while (line != null && line != string.Empty && line != "end")
         {
             //this is an option
             if (line.Contains(":"))

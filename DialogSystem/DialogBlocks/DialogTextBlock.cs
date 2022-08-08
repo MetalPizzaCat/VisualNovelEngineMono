@@ -42,6 +42,8 @@ public class DialogTextBlock : DialogSystem.DialogBlockBase
 
     private void _onLabelClicked(UserInterfaceElement elem)
     {
+        if (Game.CurrentState != GameState.Normal)
+            return;
         if (++_currentLine < Actions.Count)
         {
             _changeLine(_currentLine);

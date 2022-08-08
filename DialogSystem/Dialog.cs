@@ -110,11 +110,22 @@ public class Dialog
                 return OffscreenPosition;
         }
     }
+    private void _onSpeakerFinishedMovement()
+    {
+        Game.CurrentState = GameState.Normal;
+    }
+
+    private void _onSpeakerBegunMovement()
+    {
+        Game.CurrentState = GameState.Animation;
+    }
 
     public virtual void Init()
     {
         foreach (Speaker speaker in Speakers)
         {
+            speaker.OnBegunMovement += _onSpeakerBegunMovement;
+            speaker.OnFinishedMovement += _onSpeakerFinishedMovement;
             switch (speaker.ScenePosition)
             {
                 case SpeakerPosition.Center:
