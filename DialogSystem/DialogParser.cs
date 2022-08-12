@@ -240,11 +240,11 @@ public class DialogParser
             Match match = _stringLiteralVariableRegEx.Match(tokens[1]);
             if (match.Success)
             {
-                _dialog.Variables.Add(new DialogVariable(tokens[0].Trim(), match.Value));
+                _dialog.Variables.Add(tokens[0].Trim(), new DialogVariable(tokens[0].Trim(), match.Value));
             }
             else
             {
-                _dialog.Variables.Add(new DialogVariable(tokens[0].Trim(), float.Parse(tokens[1].Trim())));
+                _dialog.Variables.Add(tokens[0].Trim(), new DialogVariable(tokens[0].Trim(), float.Parse(tokens[1].Trim())));
             }
             line = _getNextProperLine();
         }

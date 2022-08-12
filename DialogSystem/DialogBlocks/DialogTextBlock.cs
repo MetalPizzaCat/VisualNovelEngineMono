@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 using Microsoft.Xna.Framework;
 
@@ -11,6 +12,7 @@ namespace DialogSystem;
 /// </summary>
 public class DialogTextBlock : DialogSystem.DialogBlockBase
 {
+    private readonly Regex _variableRegEx = new Regex(@"\$.*?\$");
     private Label _label;
     private Label _speakerNameLabel;
     private int _currentLine = 0;
@@ -36,7 +38,8 @@ public class DialogTextBlock : DialogSystem.DialogBlockBase
             case DialogActionType.Text:
                 if (Actions[_currentLine] is DialogSystem.TextAction text)
                 {
-                    _label.Text = text.Text;
+                    _label.Text = Regex.Replace(text.Text, @"\$.*?\$",
+                        match => Dialog.Variables[match.Value.Substring(1, match.Value.Length - 2)]?.ToString() ?? "%MISSING VARIABLE%");
                     _speakerNameLabel.Text = text.Speaker >= 0 ?
                         Dialog.Speakers[text.Speaker].SpeakerData.DisplayName :
                         string.Empty;

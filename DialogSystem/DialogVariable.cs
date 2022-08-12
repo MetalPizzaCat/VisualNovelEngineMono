@@ -27,4 +27,16 @@ public class DialogVariable
         NumberValue = value;
         Name = name;
     }
+
+    public override string ToString()
+    {
+        switch (VariableType)
+        {
+            case DialogVariableType.String:
+                return StringValue;
+            case DialogVariableType.Number:
+                return NumberValue.ToString();
+        }
+        return "%MISSING VALUE%";
+    }
 }

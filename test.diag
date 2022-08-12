@@ -36,6 +36,7 @@ skull: hello there child
 speaker girl move center
 skull: or should i say $USERNAME$?
 skull: i can see your dreams
+skull: also look number -> $AGE$
 speaker skull move right
 girl: woah
 girl: i don't care

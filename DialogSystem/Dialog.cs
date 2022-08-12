@@ -23,7 +23,7 @@ public class Dialog
     /// </summary>
     public List<Speaker> Speakers { get; set; } = new List<Speaker>();
 
-    public List<DialogVariable> Variables { get; set; } = new List<DialogVariable>();
+    public Dictionary<string, DialogVariable> Variables { get; set; } = new Dictionary<string, DialogVariable>();
 
     public Vector2 SpeakerSize { get; set; } = new Vector2(400, 400);
     public Vector2 SceneSize { get; set; } = Vector2.One;
