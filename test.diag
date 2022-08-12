@@ -24,7 +24,8 @@ source = Girl
 position = offscreen
 
 [variables]
-USERNAME = Mieclesoft Bimbows
+USERNAME = "Mieclesoft Bimbows"
+AGE = 26
 
 #these are block types
 [dialog]

@@ -22,6 +22,10 @@ public class DialogParser
     /// </summary>
     private readonly Regex _typeNameRegEx = new Regex(@"(?<=\[)([a-z])\w+(?=\])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private readonly Regex _blockNameRegEx = new Regex(@"(?<=\{)([a-z])\w+(?=\})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    /// <summary>
+    /// Any text that is in quotes, but not capturing quotation marks
+    /// </summary>
+    private readonly Regex _stringLiteralVariableRegEx = new Regex("(?<=\").*?(?=\")", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     //the result dialog
     private Dialog _dialog;
@@ -223,13 +227,35 @@ public class DialogParser
         _dialog.DialogItems.Add(label, new DialogSystem.BlockData(BlockType.Option, actions));
     }
 
+    private void _processVariables()
+    {
+        string? line = _getNextProperLine();
+        while (line != null && line != string.Empty && line != "end")
+        {
+            string[] tokens = line.Split("=");
+            if (tokens.Length != 2)
+            {
+                throw new Exception("Invalid variable assignment line");
+            }
+            Match match = _stringLiteralVariableRegEx.Match(tokens[1]);
+            if (match.Success)
+            {
+                _dialog.Variables.Add(new DialogVariable(tokens[0].Trim(), match.Value));
+            }
+            else
+            {
+                _dialog.Variables.Add(new DialogVariable(tokens[0].Trim(), float.Parse(tokens[1].Trim())));
+            }
+            line = _getNextProperLine();
+        }
+    }
+
     private void _processType(string? line)
     {
         if (line == null)
         {
             return;
         }
-
         switch (line)
         {
             case "[dialog]":
@@ -237,12 +263,16 @@ public class DialogParser
                 _parseTextDialog();
                 break;
             case "[options]":
-                Console.WriteLine("This os options block");
+                Console.WriteLine("This is options block");
                 _parseDialogOption();
                 break;
             case "[speaker]":
                 Console.WriteLine("This is speaker block");
                 _parseSpeaker();
+                break;
+            case "[variables]":
+                Console.WriteLine("This is variables block");
+                _processVariables();
                 break;
         }
     }
