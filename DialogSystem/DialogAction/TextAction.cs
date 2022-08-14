@@ -11,5 +11,6 @@ public class TextAction : DialogSystem.DialogActionBase
         _type = DialogActionType.Text;
         Text = text;
         Speaker = speaker;
+        _skippable = false;
     }
 }

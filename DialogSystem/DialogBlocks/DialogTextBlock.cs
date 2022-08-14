@@ -31,6 +31,10 @@ public class DialogTextBlock : DialogSystem.DialogBlockBase
     }
     private void _changeLine(int lineId)
     {
+        if (lineId >= Actions.Count)
+        {
+            return;
+        }
         _currentLine = lineId;
         switch (Actions[_currentLine].Action)
         {
@@ -55,15 +59,30 @@ public class DialogTextBlock : DialogSystem.DialogBlockBase
     {
         if (Game.CurrentState != GameState.Normal)
             return;
-        if (++_currentLine < Actions.Count)
+        if (!Actions[_currentLine].Skippable)
         {
-            _changeLine(_currentLine);
-        }
-        else
-        {
-            throw new System.Exception("Unexpected end of dialog reached");
+            if (++_currentLine < Actions.Count)
+            {
+                _changeLine(_currentLine);
+            }
+            else
+            {
+                throw new System.Exception("Unexpected end of dialog reached");
+            }
         }
     }
+
+    public override void Update(GameTime gameTime)
+    {
+        base.Update(gameTime);
+        //we run dialog line in updates to avoid freezing up game
+        // if there are too many actions that don't require player input
+        if (_currentLine < Actions.Count && Actions[_currentLine].Skippable)
+        {
+            _changeLine(_currentLine + 1);
+        }
+    }
+
     public override void ChangeActions(List<DialogActionBase> actions)
     {
         base.ChangeActions(actions);

@@ -43,6 +43,15 @@ public enum DialogActionType
 /// </summary>
 public abstract class DialogActionBase
 {
+    /// <summary>
+    /// Defines type of the action<br/>
+    /// This must be same as the class as this is used for casting types
+    /// </summary>
     protected DialogActionType _type;
+    /// <summary>
+    /// Defines if this action can be auto skipped, instead of waiting for player input
+    /// </summary>
+    protected bool _skippable = true;
+    public bool Skippable => _skippable;
     public DialogActionType Action => _type;
 }
