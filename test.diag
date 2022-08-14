@@ -37,6 +37,10 @@ speaker girl move center
 skull: or should i say $USERNAME$?
 skull: i can see your dreams
 skull: also look number -> $AGE$
+set $AGE$ to 29
+skull: NoW iT's DifFeReNt "$AGE$"
+change $AGE$ by -9
+skull:SuBtRaCtiOn #$AGE$#
 speaker skull move right
 girl: woah
 girl: i don't care

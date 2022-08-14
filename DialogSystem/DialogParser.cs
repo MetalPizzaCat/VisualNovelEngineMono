@@ -23,6 +23,26 @@ public class DialogParser
     private readonly Regex _typeNameRegEx = new Regex(@"(?<=\[)([a-z])\w+(?=\])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private readonly Regex _blockNameRegEx = new Regex(@"(?<=\{)([a-z])\w+(?=\})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
     /// <summary>
+    /// This matches any line that is follows this template -> set $VARIABLE$ to VALUE
+    /// </summary>
+    private readonly Regex _variableAssignmentRegEx = new Regex(@"((set)(\s+)(\$([\S]+)\$)(\s+)(to)(\s+)([\S]+))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    /// <summary>
+    /// This matches any line that is follows this template -> change $VARIABLE$ by VALUE
+    /// </summary>
+    private readonly Regex _variableChangeRegEx = new Regex(@"((change)(\s+)(\$([\S]+)\$)(\s+)(by)(\s+)([\S]+))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    /// <summary>
+    /// Extracts name from $VARIABLE$ block
+    /// </summary>
+    private readonly Regex _variableNameRegEx = new Regex(@"(?<=\$)([a-z])\w+(?=\$)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    /// <summary>
+    /// Extracts value from "to VALUE" template
+    /// </summary>
+    private readonly Regex _variableAssignmentValueRegEx = new Regex(@"(?<=(to))(\s+)([\S]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    /// <summary>
+    /// Extracts value from "to VALUE" template
+    /// </summary>
+    private readonly Regex _variableChangeValueRegEx = new Regex(@"(?<=(by))(\s+)([\S]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    /// <summary>
     /// Any text that is in quotes, but not capturing quotation marks
     /// </summary>
     private readonly Regex _stringLiteralVariableRegEx = new Regex("(?<=\").*?(?=\")", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -142,6 +162,34 @@ public class DialogParser
                     return new SpeakerStateAction(blocks[1].Trim(), blocks[3]);
             }
         }
+        else if (_variableAssignmentRegEx.IsMatch(line))
+        {
+            Match name = _variableNameRegEx.Match(line);
+            Match value = _variableAssignmentValueRegEx.Match(line);
+            Match stringLiteral = _stringLiteralVariableRegEx.Match(value.Value);
+            if (stringLiteral.Success)
+            {
+                return new VariableAction(name.Value, new DialogVariable(stringLiteral.Value), VariableOperation.Assignment);
+            }
+            else
+            {
+                return new VariableAction(name.Value, new DialogVariable(float.Parse(value.Value)), VariableOperation.Assignment);
+            }
+        }
+        else if (_variableChangeRegEx.IsMatch(line))
+        {
+            Match name = _variableNameRegEx.Match(line);
+            Match value = _variableChangeValueRegEx.Match(line);
+            Match stringLiteral = _stringLiteralVariableRegEx.Match(value.Value);
+            if (stringLiteral.Success)
+            {
+                return new VariableAction(name.Value, new DialogVariable(stringLiteral.Value), VariableOperation.Addition);
+            }
+            else
+            {
+                return new VariableAction(name.Value, new DialogVariable(float.Parse(value.Value)), VariableOperation.Addition);
+            }
+        }
         return null;
     }
 
@@ -240,11 +288,11 @@ public class DialogParser
             Match match = _stringLiteralVariableRegEx.Match(tokens[1]);
             if (match.Success)
             {
-                _dialog.Variables.Add(tokens[0].Trim(), new DialogVariable(tokens[0].Trim(), match.Value));
+                _dialog.Variables.Add(tokens[0].Trim(), new DialogVariable(match.Value));
             }
             else
             {
-                _dialog.Variables.Add(tokens[0].Trim(), new DialogVariable(tokens[0].Trim(), float.Parse(tokens[1].Trim())));
+                _dialog.Variables.Add(tokens[0].Trim(), new DialogVariable(float.Parse(tokens[1].Trim())));
             }
             line = _getNextProperLine();
         }

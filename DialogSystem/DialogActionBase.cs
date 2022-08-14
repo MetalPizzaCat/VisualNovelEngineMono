@@ -29,6 +29,10 @@ public enum DialogActionType
     /// </summary>
     Jump,
     /// <summary>
+    /// Any action that involves variable modification
+    /// </summary>
+    Variable,
+    /// <summary>
     /// Exit game
     /// </summary>
     Exit

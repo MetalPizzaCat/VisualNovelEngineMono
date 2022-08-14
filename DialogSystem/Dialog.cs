@@ -79,6 +79,28 @@ public class Dialog
                     ).Move(GetSpeakerPosition(move.TargetPosition));
                 }
                 break;
+            case DialogActionType.Variable:
+                {
+                    if (action is VariableAction variable)
+                    {
+                        switch (variable.Operation)
+                        {
+                            case VariableOperation.Assignment:
+                                Variables[variable.VariableName].Set(
+                                    variable.Value.Get()
+                                    ?? throw new System.NullReferenceException("Variable assignment contains invalid data"));
+                                break;
+                            case VariableOperation.Addition:
+                                if (Variables[variable.VariableName].VariableType == DialogVariableType.Number)
+                                {
+                                    Variables[variable.VariableName].Set(
+                                        System.Convert.ToSingle(variable.Value.Get()) + System.Convert.ToSingle(Variables[variable.VariableName].Get()));
+                                }
+                                break;
+                        }
+                    }
+                }
+                break;
             case DialogActionType.SpeakerStateChange:
                 break;
         }

@@ -9,23 +9,46 @@ public enum DialogVariableType
 public class DialogVariable
 {
     public DialogVariableType VariableType;
-    public string Name { get; set; }
-
     public float? NumberValue;
     public string? StringValue;
 
-    public DialogVariable(string name, string value)
+    public DialogVariable(string value)
     {
         VariableType = DialogVariableType.String;
         StringValue = value;
-        Name = name;
     }
 
-    public DialogVariable(string name, float value)
+    public DialogVariable( float value)
     {
         VariableType = DialogVariableType.Number;
         NumberValue = value;
-        Name = name;
+    }
+
+    public void Set(object value)
+    {
+        if (value is float number)
+        {
+            NumberValue = number;
+        }
+        if (value is string text)
+        {
+            StringValue = text;
+        }
+    }
+
+    /// <summary>
+    /// Returns value that is stored inside
+    /// </summary>
+    public object? Get()
+    {
+        switch (VariableType)
+        {
+            case DialogVariableType.Number:
+                return NumberValue;
+            case DialogVariableType.String:
+                return StringValue;
+        }
+        return null;
     }
 
     public override string ToString()
