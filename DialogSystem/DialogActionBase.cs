@@ -29,6 +29,10 @@ public enum DialogActionType
     /// </summary>
     Jump,
     /// <summary>
+    /// Jump to other block in the dialog if condition is satisfied
+    /// </summary>
+    ConditionalJump,
+    /// <summary>
     /// Any action that involves variable modification
     /// </summary>
     Variable,

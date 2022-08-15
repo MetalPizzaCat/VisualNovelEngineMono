@@ -101,6 +101,12 @@ public class Dialog
                     }
                 }
                 break;
+            case DialogActionType.ConditionalJump:
+                if (action is ConditionalJumpAction cond)
+                {
+                    
+                }
+                break;
             case DialogActionType.SpeakerStateChange:
                 break;
         }

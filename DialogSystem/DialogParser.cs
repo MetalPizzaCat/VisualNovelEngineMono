@@ -46,7 +46,27 @@ public class DialogParser
     /// Any text that is in quotes, but not capturing quotation marks
     /// </summary>
     private readonly Regex _stringLiteralVariableRegEx = new Regex("(?<=\").*?(?=\")", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    /// <summary>
+    /// This matches anything that follows this template "jump if $VARIABLE$ is CONDITION VALUE
+    /// </summary>
+    private readonly Regex _conditionalJumpRegEx = new Regex(@"(jump)(\s+)(to)(\s+)(\S+)(\s+)(if)(\s+)(\$(\S+)\$)(\s+)(is)(\s+)((greater(\s+)then)|(less(\s+)then)|(not equal(\s+)to)|(equal(\s+)to))(\s+)(\S+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    /// <summary>
+    /// Extracts the condition part from condition
+    /// </summary>
+    private readonly Regex _conditionalJumpConditionRegEx = new Regex(@"((greater(\s+)then)|(less(\s+)then)|(not equal(\s+)to)|(equal(\s+)to))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    /// <summary>
+    /// Extracts the value that is written after condition
+    /// </summary>
+    /// <param name="RegexOptions.IgnoreCase"></param>
+    /// <returns></returns>
+    private readonly Regex _conditionalJumpValueRegEx = new Regex(@"(?<=((greater(\s+)then)|(less(\s+)then)|(not equal(\s+)to)|(equal(\s+)to))(\s+))(\S+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private readonly Regex _conditionalJumpTargetRegEx = new Regex(@"(?<=(jump)(\s+)(to)(\s+))(\S+)(?=(\s+))");
 
+    /// <summary>
+    /// Matches "jump WHERE" template excluding "jump to"
+    /// </summary>
+    /// <returns></returns>
+    private readonly Regex _jumpRegEx = new Regex(@"(?<=(jump)(\s+))(?!(to))(\S+)(\s*)$");
     //the result dialog
     private Dialog _dialog;
 
@@ -135,14 +155,9 @@ public class DialogParser
     private DialogSystem.DialogActionBase? _parseActionLine(string line)
     {
         line.ToLower();
-        if (line.StartsWith("jump"))
+        if (_jumpRegEx.IsMatch(line))
         {
-            string[] bits = line.Split(" ");
-            if (bits.Length < 2)
-            {
-                throw new Exception("Invalid amount of info passed to the jump command. It should be 'jump location'");
-            }
-            return new JumpAction(bits[1]);
+            return new JumpAction(_jumpRegEx.Match(line).Value);
         }
         else if (line.StartsWith("exit"))
         {
@@ -181,6 +196,10 @@ public class DialogParser
             Match name = _variableNameRegEx.Match(line);
             Match value = _variableChangeValueRegEx.Match(line);
             Match stringLiteral = _stringLiteralVariableRegEx.Match(value.Value);
+            if (!name.Success || !value.Success)
+            {
+                throw new Exception("Invalid or missing data in variable change operation");
+            }
             if (stringLiteral.Success)
             {
                 return new VariableAction(name.Value, new DialogVariable(stringLiteral.Value), VariableOperation.Addition);
@@ -188,6 +207,52 @@ public class DialogParser
             else
             {
                 return new VariableAction(name.Value, new DialogVariable(float.Parse(value.Value)), VariableOperation.Addition);
+            }
+        }
+        else if (_conditionalJumpConditionRegEx.IsMatch(line))
+        {
+            Match variable = _variableNameRegEx.Match(line);
+            Match condition = _conditionalJumpConditionRegEx.Match(line);
+            Match value = _conditionalJumpValueRegEx.Match(line);
+            Match target = _conditionalJumpTargetRegEx.Match(line);
+            if (!variable.Success || !condition.Success || !value.Success || !target.Success)
+            {
+                throw new Exception("Missing operands in the jump if construction");
+            }
+            ConditionType type = ConditionType.Equal;
+            if (Regex.IsMatch(condition.Value, @"less(\s+)then"))
+            {
+                type = ConditionType.LessThen;
+            }
+            if (Regex.IsMatch(condition.Value, @"more(\s+)then"))
+            {
+                type = ConditionType.GreaterThen;
+            }
+            if (Regex.IsMatch(condition.Value, @"equal(\s+)to"))
+            {
+                type = ConditionType.LessThen;
+            }
+            if (Regex.IsMatch(condition.Value, @"not(\s+)equal(\s+)to"))
+            {
+                type = ConditionType.NotEqual;
+            }
+            Match match = _variableNameRegEx.Match(value.Value);
+            if (match.Success)
+            {
+                return new ConditionalJumpAction(target.Value, variable.Value, type, null, match.Value);
+            }
+            else
+            {
+                Match stringLit = _stringLiteralVariableRegEx.Match(value.Value);
+                if (stringLit.Success)
+                {
+                    return new ConditionalJumpAction(target.Value, variable.Value, type, new DialogVariable(stringLit.Value), null);
+                }
+                else
+                {
+                    return new ConditionalJumpAction(target.Value, variable.Value, type, new DialogVariable(float.Parse(value.Value)), null);
+                }
+
             }
         }
         return null;
