@@ -15,5 +15,6 @@ public class SpeakerMoveAction : DialogActionBase
         Target = target;
         TargetPosition = position;
         _type = DialogActionType.SpeakerMove;
+        _skippable = false;
     }
 }
