@@ -18,7 +18,7 @@ public class DialogVariable
         StringValue = value;
     }
 
-    public DialogVariable( float value)
+    public DialogVariable(float value)
     {
         VariableType = DialogVariableType.Number;
         NumberValue = value;
@@ -49,6 +49,32 @@ public class DialogVariable
                 return StringValue;
         }
         return null;
+    }
+
+    /// <summary>
+    /// Compares two values depending on which type they are
+    /// </summary>
+    /// <param name="variable"></param>
+    /// <returns>
+    /// 0 if equal, 1 if greater then, -1 if less then for int<br/>
+    /// and 0 if equal and -1 if not equal for string
+    /// </returns>
+    public int Compare(DialogVariable variable)
+    {
+        if (variable.VariableType != VariableType)
+        {
+            throw new System.Exception("Dialog variable types need to have matching data type. String can not be compared to number");
+        }
+        switch (VariableType)
+        {
+            case DialogVariableType.String:
+                return variable.StringValue == StringValue ? 0 : -1;
+            case DialogVariableType.Number:
+                return NumberValue == variable.NumberValue ? 0 :
+                NumberValue > variable.NumberValue ? 1 : -1;
+            default:
+                throw new System.Exception("Invalid operation reached");
+        }
     }
 
     public override string ToString()

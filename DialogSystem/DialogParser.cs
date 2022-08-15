@@ -224,13 +224,13 @@ public class DialogParser
             {
                 type = ConditionType.LessThen;
             }
-            if (Regex.IsMatch(condition.Value, @"more(\s+)then"))
+            if (Regex.IsMatch(condition.Value, @"((more)|(greater))(\s+)then"))
             {
                 type = ConditionType.GreaterThen;
             }
             if (Regex.IsMatch(condition.Value, @"equal(\s+)to"))
             {
-                type = ConditionType.LessThen;
+                type = ConditionType.Equal;
             }
             if (Regex.IsMatch(condition.Value, @"not(\s+)equal(\s+)to"))
             {

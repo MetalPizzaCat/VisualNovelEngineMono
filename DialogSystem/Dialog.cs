@@ -104,7 +104,40 @@ public class Dialog
             case DialogActionType.ConditionalJump:
                 if (action is ConditionalJumpAction cond)
                 {
-                    
+                    DialogVariable variable = Variables[cond.VariableName];
+                    DialogVariable other = cond.Value ?? Variables[cond.VariableValue ?? throw new System.NullReferenceException("No value for variable comparison was provided")];
+                    int comparison = variable.Compare(other);
+                    switch (cond.ConditionType)
+                    {
+                        case ConditionType.Equal:
+                            if (comparison == 0)
+                            {
+                                AdvanceDialog(cond.Destination);
+                                System.Console.WriteLine($"Jumping to {cond.Destination}");
+                            }
+                            break;
+                        case ConditionType.LessThen:
+                            if (comparison == -1)
+                            {
+                                AdvanceDialog(cond.Destination);
+                                System.Console.WriteLine($"Jumping to {cond.Destination}");
+                            }
+                            break;
+                        case ConditionType.GreaterThen:
+                            if (comparison == 1)
+                            {
+                                AdvanceDialog(cond.Destination);
+                                System.Console.WriteLine($"Jumping to {cond.Destination}");
+                            }
+                            break;
+                        case ConditionType.NotEqual:
+                            if (comparison != 0)
+                            {
+                                AdvanceDialog(cond.Destination);
+                                System.Console.WriteLine($"Jumping to {cond.Destination}");
+                            }
+                            break;
+                    }
                 }
                 break;
             case DialogActionType.SpeakerStateChange:

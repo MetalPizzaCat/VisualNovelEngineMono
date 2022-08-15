@@ -41,8 +41,8 @@ skull: also look number -> $AGE$
 set $AGE$ to 29
 skull: NoW iT's DifFeReNt "$AGE$"
 change $AGE$ by -9
-jump to die if $AGE$ is greater then 0
-jump to born if $AGE$ is equal to $IDK$
+jump to die if $AGE$ is equal to 0
+jump to born if $AGE$ is greater then $IDK$
 skull:SuBtRaCtiOn #$AGE$#
 speaker skull move right
 girl: woah

@@ -22,7 +22,15 @@ public class ConditionalJumpAction : DialogSystem.DialogActionBase
         ConditionType = conditionType;
     }
     public ConditionType ConditionType { get; set; }
+    /// <summary>
+    /// Where will dialog jump to
+    /// </summary>
+    /// <value></value>
     public string Destination { get; set; }
+    /// <summary>
+    /// Name of the variable that everything will be compared with
+    /// </summary>
+    /// <value></value>
     public string VariableName { get; set; }
     /// <summary>
     /// Constant value to compare against
